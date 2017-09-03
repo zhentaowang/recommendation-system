@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.Permission">
+    <id column="permission_id" jdbcType="BIGINT" property="permissionId" />
+    <result column="role_permission_id" jdbcType="BIGINT" property="rolePermissionId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="airport_code" jdbcType="VARCHAR" property="airportCode" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="permission_type" jdbcType="VARCHAR" property="permissionType" />
+    <result column="data_permission" jdbcType="VARCHAR" property="dataPermission" />
+    <result column="role_ids" jdbcType="VARCHAR" property="roleIds" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="update_user" jdbcType="BIGINT" property="updateUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    permission_id, airport_code, url, name, permission_type, create_user, update_user, create_time, update_time, is_deleted
+  </sql>
+
+  <select id="selectById" parameterType="map" resultMap="BaseResultMap">
+    SELECT permission_id, airport_code, url, name FROM permission where permission_id = #{permissionId,jdbcType=BIGINT} and is_deleted = 0
+  </select>
+</mapper>
