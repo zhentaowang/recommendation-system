@@ -299,6 +299,9 @@ public class BusinessService implements IBusinessService {
                             behaviorScore += userRest.getCollectionNum() * userBehaviorRuleContent.getDouble("collectionNum");
                             behaviorScore += userRest.getCommentNum() * userBehaviorRuleContent.getDouble("commentNum");
                             behaviorScore += userRest.getAverageOrderAmount() * userBehaviorRuleContent.getDouble("averageOrderAmount");
+                            behaviorScore += userRest.getUsageCounter() * userBehaviorRuleContent.getDouble("usageCounter");
+                            behaviorScore += userRest.getBrowseNum() * userBehaviorRuleContent.getDouble("browseNum");
+                            behaviorScore += userRest.getBrowseHours() * userBehaviorRuleContent.getDouble("browseHours");
                             if (userRest.getMultitimeConsumption()) {
                                 behaviorScore += userBehaviorRuleContent.getDouble("isMultitimeConsumption");
                             }
