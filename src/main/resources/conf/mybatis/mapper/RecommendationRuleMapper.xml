@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.RecommendationRuleMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.RecommendationRule">
+    <id column="rule_id" jdbcType="BIGINT" property="ruleId" />
+    <result column="rule_name" jdbcType="VARCHAR" property="ruleName" />
+    <result column="rule_type" jdbcType="TINYINT" property="ruleType" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    <result column="type_weight" jdbcType="INTEGER" property="typeWeight" />
+    <result column="rule_content" jdbcType="VARCHAR" property="ruleContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    rule_id, rule_name, rule_type, type_name, type_weight, rule_content
+  </sql>
+  <select id="getRecommendationRule" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from recommendation_rule
+    where rule_name = #{ruleName,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from recommendation_rule
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from recommendation_rule
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.adatafun.recommendation.model.RecommendationRule">
+    insert into recommendation_rule (rule_id, rule_name, rule_type, 
+      type_name, type_weight, rule_content
+      )
+    values (#{ruleId,jdbcType=BIGINT}, #{ruleName,jdbcType=VARCHAR}, #{ruleType,jdbcType=TINYINT}, 
+      #{typeName,jdbcType=VARCHAR}, #{typeWeight,jdbcType=INTEGER}, #{ruleContent,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.adatafun.recommendation.model.RecommendationRule">
+    insert into recommendation_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        rule_id,
+      </if>
+      <if test="ruleName != null">
+        rule_name,
+      </if>
+      <if test="ruleType != null">
+        rule_type,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+      <if test="typeWeight != null">
+        type_weight,
+      </if>
+      <if test="ruleContent != null">
+        rule_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ruleId != null">
+        #{ruleId,jdbcType=BIGINT},
+      </if>
+      <if test="ruleName != null">
+        #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleType != null">
+        #{ruleType,jdbcType=TINYINT},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeWeight != null">
+        #{typeWeight,jdbcType=INTEGER},
+      </if>
+      <if test="ruleContent != null">
+        #{ruleContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.adatafun.recommendation.model.RecommendationRule">
+    update recommendation_rule
+    <set>
+      <if test="ruleName != null">
+        rule_name = #{ruleName,jdbcType=VARCHAR},
+      </if>
+      <if test="ruleType != null">
+        rule_type = #{ruleType,jdbcType=TINYINT},
+      </if>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="typeWeight != null">
+        type_weight = #{typeWeight,jdbcType=INTEGER},
+      </if>
+      <if test="ruleContent != null">
+        rule_content = #{ruleContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.adatafun.recommendation.model.RecommendationRule">
+    update recommendation_rule
+    set rule_name = #{ruleName,jdbcType=VARCHAR},
+      rule_type = #{ruleType,jdbcType=TINYINT},
+      type_name = #{typeName,jdbcType=VARCHAR},
+      type_weight = #{typeWeight,jdbcType=INTEGER},
+      rule_content = #{ruleContent,jdbcType=VARCHAR}
+    where rule_id = #{ruleId,jdbcType=BIGINT}
+  </update>
+</mapper>

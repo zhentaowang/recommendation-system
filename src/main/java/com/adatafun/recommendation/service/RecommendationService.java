@@ -6,59 +6,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.POST;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by yanggf on 2017/9/4.
  */
 public class RecommendationService {
-    @POST
-    public static String getRestaurant(final JSONObject queryRestaurantJson){
-        int restaurantLength = 0;
-        String[] restaurantId = new String[5];
-        Integer[] restaurantWeight = new Integer[5];
-        try {
-            String userId = queryRestaurantJson.getString("userId");
-            String flightNo = queryRestaurantJson.getString("flightNo");
-            String airportCode;
-            String position;
-            if ( queryRestaurantJson.containsKey("airportCode") ) {
-                airportCode = queryRestaurantJson.getString("airportCode");
-            }
-            if ( queryRestaurantJson.containsKey("position") ) {
-                position = queryRestaurantJson.getString("position");
-            }
-            JSONArray restaurantInfo = queryRestaurantJson.getJSONArray("restaurantInfo");
-            //System.out.println(restaurantInfo);
-            restaurantLength = restaurantInfo.size();
-            for (int i = 0; i < restaurantInfo.size(); i++){
-                JSONObject oj = restaurantInfo.getJSONObject(i);
-                restaurantId[i] = restaurantInfo.getJSONObject(i).getString("restaurantId");
-                restaurantWeight[i] = restaurantInfo.getJSONObject(i).getInteger("restaurantWeight");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"status\":\"500\"}";
-        }
-        List<String> resultRestaurant = new ArrayList<String>();
-        if ( restaurantLength > 0) {
-            for (int i = 0; i < restaurantLength; i++){
-                resultRestaurant.add(restaurantId[i]);
-            }
-        }
-        Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
-        innerMap.put("restaurant", resultRestaurant);
-        RestaurantResult rstrst = new RestaurantResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
-        rstrst.setData(innerMap);
-        String result = JSON.toJSONString(rstrst);
-        //System.out.println(result);
-        return result;
-    }
 
     @POST
     public static String getSetMeal(final JSONObject querySetMealJson){

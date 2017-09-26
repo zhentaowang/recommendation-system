@@ -11,23 +11,22 @@ public class User {
 
     @JestId
     private Integer id;
-    private String name;
-    private Date birth;
+    private String userId;
+    private String restaurantPreferences;
 
     public User() {
         super();
         // TODO Auto-generated constructor stub
     }
-    public User(Integer id, String name, Date birth) {
+    public User(Integer id, String restaurantPreferences) {
         super();
         this.id = id;
-        this.name = name;
-        this.birth = birth;
+        this.restaurantPreferences = restaurantPreferences;
     }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", birth=" + birth + "]";
+        return "User [id=" + id + ", userId=" + userId + ", restaurantPreferences=" + restaurantPreferences + "]";
     }
     public Integer getId() {
         return id;
@@ -35,17 +34,17 @@ public class User {
     public void setId(Integer id) {
         this.id = id;
     }
-    public String getName() {
-        return name;
+    public String getUserId() {
+        return userId;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
-    public Date getBirth() {
-        return birth;
+    public String getRestaurantPreferences() {
+        return restaurantPreferences;
     }
-    public void setBirth(Date birth) {
-        this.birth = birth;
+    public void setRestaurantPreferences(String name) {
+        this.restaurantPreferences = name;
     }
 
 }
