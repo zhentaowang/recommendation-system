@@ -26,7 +26,7 @@ public class JestService {
 
         JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://localhost:9200")
+                .Builder("http://192.168.1.127:9200")
                 .gson(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm:ss").create())
                 .connTimeout(1500)
                 .readTimeout(3000)

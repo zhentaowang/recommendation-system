@@ -6,22 +6,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.ws.rs.POST;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by yanggf on 2017/9/4.
  */
 public class RecommendationService {
-    public static boolean checkToken(String token){
-        if ("123456".equals(token)){
-            return true;
-        } else {
-            return false;
-        }
-    }
     @POST
     public static String getRestaurant(final JSONObject queryRestaurantJson){
         int restaurantLength = 0;
@@ -66,7 +56,6 @@ public class RecommendationService {
         //System.out.println(result);
         return result;
     }
-
     @POST
     public static String getSetMeal(final JSONObject querySetMealJson){
         int setMealLength = 0;

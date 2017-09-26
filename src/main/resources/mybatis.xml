@@ -7,7 +7,4 @@
         <setting name="logImpl" value="LOG4J" />
         <setting name="cacheEnabled" value="true" /> <!--使用mybatis缓存-->
     </settings>
-    <typeAliases>
-        <package name="com.adatafun.recommendation.model" />
-    </typeAliases>
 </configuration>

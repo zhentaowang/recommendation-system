@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.TbdFlightInfoMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.TbdFlightInfo">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="flight_no" jdbcType="VARCHAR" property="flightNo" />
+    <result column="flight_date" jdbcType="DATE" property="flightDate" />
+    <result column="flight_category" jdbcType="VARCHAR" property="flightCategory" />
+    <result column="airline_name" jdbcType="VARCHAR" property="airlineName" />
+    <result column="airport_depart_code" jdbcType="VARCHAR" property="airportDepartCode" />
+    <result column="airport_depart_iata" jdbcType="VARCHAR" property="airportDepartIata" />
+    <result column="airport_depart_name" jdbcType="VARCHAR" property="airportDepartName" />
+    <result column="airport_arrive_code" jdbcType="VARCHAR" property="airportArriveCode" />
+    <result column="airport_arrive_iata" jdbcType="VARCHAR" property="airportArriveIata" />
+    <result column="airport_arrive_name" jdbcType="VARCHAR" property="airportArriveName" />
+    <result column="boarding_gate" jdbcType="VARCHAR" property="boardingGate" />
+    <result column="terminal_depart" jdbcType="VARCHAR" property="terminalDepart" />
+    <result column="terminal_arrive" jdbcType="VARCHAR" property="terminalArrive" />
+    <result column="timezone_depart" jdbcType="VARCHAR" property="timezoneDepart" />
+    <result column="timezone_arrive" jdbcType="VARCHAR" property="timezoneArrive" />
+    <result column="city_depart_name" jdbcType="VARCHAR" property="cityDepartName" />
+    <result column="city_arrive_name" jdbcType="VARCHAR" property="cityArriveName" />
+    <result column="depart_time_plan" jdbcType="TIMESTAMP" property="departTimePlan" />
+    <result column="arrive_time_plan" jdbcType="TIMESTAMP" property="arriveTimePlan" />
+    <result column="depart_time_predict" jdbcType="TIMESTAMP" property="departTimePredict" />
+    <result column="arrive_time_predict" jdbcType="TIMESTAMP" property="arriveTimePredict" />
+    <result column="depart_time_actual" jdbcType="TIMESTAMP" property="departTimeActual" />
+    <result column="arrive_time_actual" jdbcType="TIMESTAMP" property="arriveTimeActual" />
+    <result column="boarding_status" jdbcType="VARCHAR" property="boardingStatus" />
+    <result column="flight_status" jdbcType="VARCHAR" property="flightStatus" />
+    <result column="alternate_info" jdbcType="VARCHAR" property="alternateInfo" />
+    <result column="fill_flight_no" jdbcType="VARCHAR" property="fillFlightNo" />
+    <result column="current_status" jdbcType="VARCHAR" property="currentStatus" />
+    <result column="current_status_code" jdbcType="VARCHAR" property="currentStatusCode" />
+    <result column="center_id" jdbcType="VARCHAR" property="centerId" />
+    <result column="set_type" jdbcType="VARCHAR" property="setType" />
+    <result column="to_type" jdbcType="VARCHAR" property="toType" />
+  </resultMap>
+  <select id="getFlightInfoByFlightNo"  parameterType="map"  resultMap="BaseResultMap">
+    SELECT * from tbd_flight_info where flight_no = #{flightNo,jdbcType=VARCHAR} and flight_date = #{flightDate,jdbcType=VARCHAR}
+  </select>
+</mapper>
