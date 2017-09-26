@@ -136,8 +136,8 @@ public class BusinessService implements IBusinessService {
             case "queryType":
                 success = RecommendationService.getType(request);
                 break;
-            case "queryTypeProduct":
-                success = RecommendationService.getTypeProduct(request);
+            case "queryProduct":
+                success = RecommendationService.getProduct(request);
                 break;
             default:
                 break;

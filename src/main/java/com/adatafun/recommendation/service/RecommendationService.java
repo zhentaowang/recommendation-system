@@ -15,11 +15,18 @@ import java.util.Map;
  * Created by yanggf on 2017/9/4.
  */
 public class RecommendationService {
+    public static boolean checkToken(String token){
+        if ("123456".equals(token)){
+            return true;
+        } else {
+            return false;
+        }
+    }
     @POST
     public static String getRestaurant(final JSONObject queryRestaurantJson){
         int restaurantLength = 0;
-        String[] restaurantId = new String[5];
-        Integer[] restaurantWeight = new Integer[5];
+        String[] restaurantCode = new String[10];
+        Integer[] restaurantWeight = new Integer[10];
         try {
             String userId = queryRestaurantJson.getString("userId");
             String flightNo = queryRestaurantJson.getString("flightNo");
@@ -36,25 +43,25 @@ public class RecommendationService {
             restaurantLength = restaurantInfo.size();
             for (int i = 0; i < restaurantInfo.size(); i++){
                 JSONObject oj = restaurantInfo.getJSONObject(i);
-                restaurantId[i] = restaurantInfo.getJSONObject(i).getString("restaurantId");
+                restaurantCode[i] = restaurantInfo.getJSONObject(i).getString("restaurantCode");
                 restaurantWeight[i] = restaurantInfo.getJSONObject(i).getInteger("restaurantWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultRestaurant = new ArrayList<String>();
         if ( restaurantLength > 0) {
             for (int i = 0; i < restaurantLength; i++){
-                resultRestaurant.add(restaurantId[i]);
+                resultRestaurant.add(restaurantCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("restaurant", resultRestaurant);
         RestaurantResult rstrst = new RestaurantResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -63,8 +70,8 @@ public class RecommendationService {
     @POST
     public static String getSetMeal(final JSONObject querySetMealJson){
         int setMealLength = 0;
-        String[] setMealId = new String[5];
-        Integer[] setMealWeight = new Integer[5];
+        String[] setMealCode = new String[10];
+        Integer[] setMealWeight = new Integer[10];
         try {
             String userId = querySetMealJson.getString("userId");
             String flightNo = querySetMealJson.getString("flightNo");
@@ -77,39 +84,39 @@ public class RecommendationService {
                 position = querySetMealJson.getString("position");
             }
             JSONArray setMealInfo = querySetMealJson.getJSONArray("setMealInfo");
-            System.out.println(setMealInfo);
+            //System.out.println(setMealInfo);
             setMealLength = setMealInfo.size();
             for (int i = 0; i < setMealInfo.size(); i++){
                 JSONObject oj = setMealInfo.getJSONObject(i);
-                setMealId[i] = setMealInfo.getJSONObject(i).getString("setMealId");
+                setMealCode[i] = setMealInfo.getJSONObject(i).getString("setMealCode");
                 setMealWeight[i] = setMealInfo.getJSONObject(i).getInteger("setMealWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultSetMeal = new ArrayList<String>();
         if ( setMealLength > 0) {
             for (int i = 0; i < setMealLength; i++){
-                resultSetMeal.add(setMealId[i]);
+                resultSetMeal.add(setMealCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("set_meal", resultSetMeal);
         SetMealResult rstrst = new SetMealResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
     @POST
     public static String getBrandRestaurant(final JSONObject queryBrandRestaurantJson){
         int brandRestaurantLength = 0;
-        String[] brandRestaurantId = new String[5];
-        Integer[] brandRestaurantWeight = new Integer[5];
+        String[] brandRestaurantCode = new String[10];
+        Integer[] brandRestaurantWeight = new Integer[10];
         try {
             String userId = queryBrandRestaurantJson.getString("userId");
             String flightNo = queryBrandRestaurantJson.getString("flightNo");
@@ -122,39 +129,39 @@ public class RecommendationService {
                 position = queryBrandRestaurantJson.getString("position");
             }
             JSONArray brandRestaurantInfo = queryBrandRestaurantJson.getJSONArray("brandRestaurantInfo");
-            System.out.println(brandRestaurantInfo);
+            //System.out.println(brandRestaurantInfo);
             brandRestaurantLength = brandRestaurantInfo.size();
             for (int i = 0; i < brandRestaurantInfo.size(); i++){
                 JSONObject oj = brandRestaurantInfo.getJSONObject(i);
-                brandRestaurantId[i] = brandRestaurantInfo.getJSONObject(i).getString("brandRestaurantId");
+                brandRestaurantCode[i] = brandRestaurantInfo.getJSONObject(i).getString("brandRestaurantCode");
                 brandRestaurantWeight[i] = brandRestaurantInfo.getJSONObject(i).getInteger("brandRestaurantWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultBrandRestaurant = new ArrayList<String>();
         if ( brandRestaurantLength > 0) {
             for (int i = 0; i < brandRestaurantLength; i++){
-                resultBrandRestaurant.add(brandRestaurantId[i]);
+                resultBrandRestaurant.add(brandRestaurantCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("brandRestaurant", resultBrandRestaurant);
         BrandRestaurantResult rstrst = new BrandRestaurantResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
     @POST
     public static String getCuisine(final JSONObject queryCuisineJson){
         int cuisineLength = 0;
-        String[] cuisineId = new String[5];
-        Integer[] cuisineWeight = new Integer[5];
+        String[] cuisineCode = new String[10];
+        Integer[] cuisineWeight = new Integer[10];
         try {
             String userId = queryCuisineJson.getString("userId");
             String flightNo = queryCuisineJson.getString("flightNo");
@@ -167,39 +174,39 @@ public class RecommendationService {
                 position = queryCuisineJson.getString("position");
             }
             JSONArray cuisineInfo = queryCuisineJson.getJSONArray("cuisineInfo");
-            System.out.println(cuisineInfo);
+            //System.out.println(cuisineInfo);
             cuisineLength = cuisineInfo.size();
             for (int i = 0; i < cuisineInfo.size(); i++){
                 JSONObject oj = cuisineInfo.getJSONObject(i);
-                cuisineId[i] = cuisineInfo.getJSONObject(i).getString("cuisineId");
+                cuisineCode[i] = cuisineInfo.getJSONObject(i).getString("cuisineCode");
                 cuisineWeight[i] = cuisineInfo.getJSONObject(i).getInteger("cuisineWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultCuisine = new ArrayList<String>();
         if ( cuisineLength > 0) {
             for (int i = 0; i < cuisineLength; i++){
-                resultCuisine.add(cuisineId[i]);
+                resultCuisine.add(cuisineCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("cuisine", resultCuisine);
         CuisineResult rstrst = new CuisineResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
     @POST
     public static String getLounge(final JSONObject queryLoungeJson){
         int loungeLength = 0;
-        String[] loungeId = new String[5];
-        Integer[] loungeWeight = new Integer[5];
+        String[] loungeCode = new String[10];
+        Integer[] loungeWeight = new Integer[10];
         try {
             String userId = queryLoungeJson.getString("userId");
             String flightNo = queryLoungeJson.getString("flightNo");
@@ -216,25 +223,25 @@ public class RecommendationService {
             loungeLength = loungeInfo.size();
             for (int i = 0; i < loungeInfo.size(); i++){
                 JSONObject oj = loungeInfo.getJSONObject(i);
-                loungeId[i] = loungeInfo.getJSONObject(i).getString("loungeId");
+                loungeCode[i] = loungeInfo.getJSONObject(i).getString("loungeCode");
                 loungeWeight[i] = loungeInfo.getJSONObject(i).getInteger("loungeWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultLounge = new ArrayList<String>();
         if ( loungeLength > 0) {
             for (int i = 0; i < loungeLength; i++){
-                resultLounge.add(loungeId[i]);
+                resultLounge.add(loungeCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("lounge", resultLounge);
         LoungeResult rstrst = new LoungeResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -244,8 +251,8 @@ public class RecommendationService {
     @POST
     public static String getShop(final JSONObject queryShopJson){
         int shopLength = 0;
-        String[] shopId = new String[5];
-        Integer[] shopWeight = new Integer[5];
+        String[] shopCode = new String[10];
+        Integer[] shopWeight = new Integer[10];
         try {
             String userId = queryShopJson.getString("userId");
             String flightNo = queryShopJson.getString("flightNo");
@@ -262,25 +269,25 @@ public class RecommendationService {
             shopLength = shopInfo.size();
             for (int i = 0; i < shopInfo.size(); i++){
                 JSONObject oj = shopInfo.getJSONObject(i);
-                shopId[i] = shopInfo.getJSONObject(i).getString("shopId");
+                shopCode[i] = shopInfo.getJSONObject(i).getString("shopCode");
                 shopWeight[i] = shopInfo.getJSONObject(i).getInteger("shopWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultShop = new ArrayList<String>();
         if ( shopLength > 0) {
             for (int i = 0; i < shopLength; i++){
-                resultShop.add(shopId[i]);
+                resultShop.add(shopCode[i]);
             }
         }
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("shop", resultShop);
         ShopResult rstrst = new ShopResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -289,8 +296,8 @@ public class RecommendationService {
     @POST
     public static String getBannerArticle(final JSONObject queryBannerArticleJson){
         int bannerArticleLength = 0;
-        String[] bannerArticleId = new String[5];
-        Integer[] bannerArticleWeight = new Integer[5];
+        String[] bannerArticleId = new String[10];
+        Integer[] bannerArticleWeight = new Integer[10];
         try {
             String userId = queryBannerArticleJson.getString("userId");
             String flightNo = queryBannerArticleJson.getString("flightNo");
@@ -312,7 +319,7 @@ public class RecommendationService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultBannerArticle = new ArrayList<String>();
         if ( bannerArticleLength > 0) {
@@ -323,9 +330,9 @@ public class RecommendationService {
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("bannerArticle", resultBannerArticle);
         BannerArticleResult rstrst = new BannerArticleResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -335,8 +342,8 @@ public class RecommendationService {
     @POST
     public static String getHomepageArticle(final JSONObject queryHomepageArticleJson){
         int homepageArticleLength = 0;
-        String[] homepageArticleId = new String[5];
-        Integer[] homepageArticleWeight = new Integer[5];
+        String[] homepageArticleId = new String[10];
+        Integer[] homepageArticleWeight = new Integer[10];
         try {
             String userId = queryHomepageArticleJson.getString("userId");
             String flightNo = queryHomepageArticleJson.getString("flightNo");
@@ -358,7 +365,7 @@ public class RecommendationService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultHomepageArticle = new ArrayList<String>();
         if ( homepageArticleLength > 0) {
@@ -369,9 +376,9 @@ public class RecommendationService {
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("homepageArticle", resultHomepageArticle);
         HomepageArticleResult rstrst = new HomepageArticleResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -381,8 +388,8 @@ public class RecommendationService {
     @POST
     public static String getPageArticle(final JSONObject queryPageArticleJson){
         int pageArticleLength = 0;
-        String[] pageArticleId = new String[5];
-        Integer[] pageArticleWeight = new Integer[5];
+        String[] pageArticleId = new String[10];
+        Integer[] pageArticleWeight = new Integer[10];
         try {
             String userId = queryPageArticleJson.getString("userId");
             String flightNo = queryPageArticleJson.getString("flightNo");
@@ -404,7 +411,7 @@ public class RecommendationService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultPageArticle = new ArrayList<String>();
         if ( pageArticleLength > 0) {
@@ -415,9 +422,9 @@ public class RecommendationService {
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("pageArticle", resultPageArticle);
         PageArticleResult rstrst = new PageArticleResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -427,8 +434,8 @@ public class RecommendationService {
     @POST
     public static String getType(final JSONObject queryTypeJson){
         int typeLength = 0;
-        String[] typeId = new String[5];
-        Integer[] typeWeight = new Integer[5];
+        String[] typeId = new String[10];
+        Integer[] typeWeight = new Integer[10];
         try {
             String userId = queryTypeJson.getString("userId");
             String flightNo = queryTypeJson.getString("flightNo");
@@ -450,7 +457,7 @@ public class RecommendationService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
         List<String> resultType = new ArrayList<String>();
         if ( typeLength > 0) {
@@ -461,9 +468,9 @@ public class RecommendationService {
         Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
         innerMap.put("type", resultType);
         TypeResult rstrst = new TypeResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
@@ -471,10 +478,10 @@ public class RecommendationService {
 
 
     @POST
-    public static String getTypeProduct(final JSONObject queryTypeProductJson){
+    public static String getProduct(final JSONObject queryTypeProductJson){
         int typeProductLength = 0;
-        String[] typeProductId = new String[5];
-        Integer[] typeProductWeight = new Integer[5];
+        String[] typeProductCode = new String[10];
+        Integer[] typeProductWeight = new Integer[10];
         try {
             String userId = queryTypeProductJson.getString("userId");
             String flightNo = queryTypeProductJson.getString("flightNo");
@@ -491,25 +498,25 @@ public class RecommendationService {
             typeProductLength = typeProductInfo.size();
             for (int i = 0; i < typeProductInfo.size(); i++){
                 JSONObject oj = typeProductInfo.getJSONObject(i);
-                typeProductId[i] = typeProductInfo.getJSONObject(i).getString("typeProductId");
+                typeProductCode[i] = typeProductInfo.getJSONObject(i).getString("typeProductCode");
                 typeProductWeight[i] = typeProductInfo.getJSONObject(i).getInteger("typeProductWeight");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "{\"status\":\"500\"}";
+            return "{\"msg\":\"internal server error\",\"status\":\"500\"}";
         }
-        List<String> resultTypeProduct = new ArrayList<String>();
+        Map<String,String> resultTypeProduct = new HashMap<>();
         if ( typeProductLength > 0) {
             for (int i = 0; i < typeProductLength; i++){
-                resultTypeProduct.add(typeProductId[i]);
+                resultTypeProduct.put("loungeCode",typeProductCode[i]);
             }
         }
-        Map<String, List<String>> innerMap = new HashMap<String, List<String>>();
+        Map<String, Map<String,String>> innerMap = new HashMap<String, Map<String,String>>();
         innerMap.put("typeProduct", resultTypeProduct);
         TypeProductResult rstrst = new TypeProductResult();
-        rstrst.setState(200);
-        rstrst.setMessage("ok");
         rstrst.setData(innerMap);
+        rstrst.setStatus(200);
+        rstrst.setMsg("ok");
         String result = JSON.toJSONString(rstrst);
         //System.out.println(result);
         return result;
