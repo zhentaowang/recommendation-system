@@ -71,38 +71,8 @@ public class BusinessService implements IBusinessService {
         String success = null;
 
         switch (operation) {
-            case "queryRestaurant":
-                success = getRestaurant(request);
-                break;
-            case "querySetMeal":
-                success = RecommendationService.getSetMeal(request);
-                break;
-            case "queryBrandRestaurant":
-                success = RecommendationService.getBrandRestaurant(request);
-                break;
-            case "queryCuisine":
-                success = RecommendationService.getCuisine(request);
-                break;
-            case "queryLounge":
-                success = RecommendationService.getLounge(request);
-                break;
-            case "queryShop":
-                success = RecommendationService.getShop(request);
-                break;
-            case "queryBannerArticle":
-                success = RecommendationService.getBannerArticle(request);
-                break;
-            case "queryHomepageArticle":
-                success = RecommendationService.getHomepageArticle(request);
-                break;
-            case "queryPageArticle":
-                success = RecommendationService.getPageArticle(request);
-                break;
-            case "queryType":
-                success = RecommendationService.getType(request);
-                break;
             case "queryTypeProduct":
-                success = RecommendationService.getTypeProduct(request);
+                success = RecommendationService.getProduct(request);
                 break;
             case "createIndex":
                 success = createIndex(request);
@@ -145,6 +115,40 @@ public class BusinessService implements IBusinessService {
                 break;
             case "deleteIndex":
                 success = deleteIndex(request);
+                break;
+            case "queryRestaurant":
+                success = RecommendationService.getRestaurant(request);
+                //success = view(request);
+                break;
+            case "querySetMeal":
+                success = RecommendationService.getSetMeal(request);
+                break;
+            case "queryBrandRestaurant":
+                success = RecommendationService.getBrandRestaurant(request);
+                break;
+            case "queryCuisine":
+                success = RecommendationService.getCuisine(request);
+                break;
+            case "queryLounge":
+                success = RecommendationService.getLounge(request);
+                break;
+            case "queryShop":
+                success = RecommendationService.getShop(request);
+                break;
+            case "queryBannerArticle":
+                success = RecommendationService.getBannerArticle(request);
+                break;
+            case "queryHomepageArticle":
+                success = RecommendationService.getHomepageArticle(request);
+                break;
+            case "queryPageArticle":
+                success = RecommendationService.getPageArticle(request);
+                break;
+            case "queryType":
+                success = RecommendationService.getType(request);
+                break;
+            case "queryProduct":
+                success = RecommendationService.getProduct(request);
                 break;
             default:
                 break;

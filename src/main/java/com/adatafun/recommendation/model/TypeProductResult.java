@@ -7,31 +7,31 @@ import java.util.Map;
  * Created by yanggf on 2017/9/5.
  */
 public class TypeProductResult {
-    private Integer state;
-    private String message;
-    private Map<String, List<String>> data;
+    private Integer status;
+    private String msg;
+    private Map<String, Map<String, String>> data;
 
-    public Integer getState() {
-        return state;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
-    public Map<String, List<String>> getData() {
+    public Map<String, Map<String,String>> getData() {
         return data;
     }
 
-    public void setData(Map<String, List<String>> data) {
+    public void setData(Map<String, Map<String, String>> data) {
         this.data = data;
     }
 }

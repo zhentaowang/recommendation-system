@@ -7,24 +7,24 @@ import java.util.Map;
  * Created by yanggf on 2017/9/5.
  */
 public class BannerArticleResult {
-    private Integer state;
-    private String message;
+    private Integer status;
+    private String msg;
     private Map<String, List<String>> data;
 
-    public Integer getState() {
-        return state;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public Map<String, List<String>> getData() {

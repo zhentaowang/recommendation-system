@@ -8,24 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 public class SetMealResult {
-    private Integer state;
-    private String message;
+    private Integer status;
+    private String msg;
     private Map<String, List<String>> data;
 
-    public Integer getState() {
-        return state;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public Map<String, List<String>> getData() {
