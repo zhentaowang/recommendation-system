@@ -277,6 +277,7 @@
                 <configuration>
                     <source>${jdk.version}</source> <!-- 源代码使用的开发版本 -->
                     <target>${jdk.version}</target> <!-- 需要生成的目标class文件的编译版本 -->
+                    <encoding>utf-8</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -286,51 +287,6 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.4</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <springmvc>false</springmvc>
-                            <!--<locations>-->
-                                <!--<location>com.adatafun.recommendation.controller.XXXController</location>-->
-                            <!--</locations>-->
-                            <schemes>
-                                <scheme>http</scheme>
-                            </schemes>
-                            <host>192.168.1.198:8080</host>
-                            <!--<basePath>/recommendation-system</basePath>-->
-                            <info>
-                                <title>Recommendation System</title>
-                                <version>v1</version>
-                                <description>推荐引擎</description>
-                                <termsOfService>
-                                    http://www.github.com/kongchen/swagger-maven-plugin
-                                </termsOfService>
-                                <contact>
-                                    <email>wangzhentao@iairportcloud.com</email>
-                                    <name>Wang Zhen Tao</name>
-                                </contact>
-                                <license>
-                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-                                    <name>Apache 2.0</name>
-                                </license>
-                            </info>
-                            <swaggerDirectory>WebContent</swaggerDirectory>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.mybatis.generator</groupId>

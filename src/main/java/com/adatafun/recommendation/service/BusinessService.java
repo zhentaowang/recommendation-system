@@ -71,6 +71,39 @@ public class BusinessService implements IBusinessService {
         String success = null;
 
         switch (operation) {
+            case "queryRestaurant":
+                success = getRestaurant(request);
+                break;
+            case "querySetMeal":
+                success = RecommendationService.getSetMeal(request);
+                break;
+            case "queryBrandRestaurant":
+                success = RecommendationService.getBrandRestaurant(request);
+                break;
+            case "queryCuisine":
+                success = RecommendationService.getCuisine(request);
+                break;
+            case "queryLounge":
+                success = RecommendationService.getLounge(request);
+                break;
+            case "queryShop":
+                success = RecommendationService.getShop(request);
+                break;
+            case "queryBannerArticle":
+                success = RecommendationService.getBannerArticle(request);
+                break;
+            case "queryHomepageArticle":
+                success = RecommendationService.getHomepageArticle(request);
+                break;
+            case "queryPageArticle":
+                success = RecommendationService.getPageArticle(request);
+                break;
+            case "queryType":
+                success = RecommendationService.getType(request);
+                break;
+            case "queryProduct":
+                success = RecommendationService.getProduct(request);
+                break;
             case "queryTypeProduct":
                 success = RecommendationService.getProduct(request);
                 break;
@@ -116,40 +149,6 @@ public class BusinessService implements IBusinessService {
             case "deleteIndex":
                 success = deleteIndex(request);
                 break;
-            case "queryRestaurant":
-                success = RecommendationService.getRestaurant(request);
-                //success = view(request);
-                break;
-            case "querySetMeal":
-                success = RecommendationService.getSetMeal(request);
-                break;
-            case "queryBrandRestaurant":
-                success = RecommendationService.getBrandRestaurant(request);
-                break;
-            case "queryCuisine":
-                success = RecommendationService.getCuisine(request);
-                break;
-            case "queryLounge":
-                success = RecommendationService.getLounge(request);
-                break;
-            case "queryShop":
-                success = RecommendationService.getShop(request);
-                break;
-            case "queryBannerArticle":
-                success = RecommendationService.getBannerArticle(request);
-                break;
-            case "queryHomepageArticle":
-                success = RecommendationService.getHomepageArticle(request);
-                break;
-            case "queryPageArticle":
-                success = RecommendationService.getPageArticle(request);
-                break;
-            case "queryType":
-                success = RecommendationService.getType(request);
-                break;
-            case "queryProduct":
-                success = RecommendationService.getProduct(request);
-                break;
             default:
                 break;
         }
@@ -168,12 +167,36 @@ public class BusinessService implements IBusinessService {
 
         try {
             if (queryRestaurantJson.containsKey("userId")
-                    && queryRestaurantJson.containsKey("flightNo")
-                    && queryRestaurantJson.containsKey("position")
                     && queryRestaurantJson.containsKey("restaurantInfo")) {
 
-                String position = queryRestaurantJson.getString("position");
+                int positionFlag = 1, flightInfoFlag = 1, userBehaviorFlag = 1;
+                if (!queryRestaurantJson.containsKey("position") ||
+                        queryRestaurantJson.getString("position").equals(null) ||
+                        queryRestaurantJson.getString("position").equals("")) {
+                    positionFlag = 0; //没有位置信息，位置推荐无效
+                }
+                if (!queryRestaurantJson.containsKey("flightNo") ||
+                        !queryRestaurantJson.containsKey("flightDate") ||
+                        queryRestaurantJson.getString("flightNo").equals(null) ||
+                        queryRestaurantJson.getString("flightNo").equals("") ||
+                        queryRestaurantJson.getString("flightDate").equals("") ||
+                        queryRestaurantJson.getString("flightDate").equals(null)) {
+                    flightInfoFlag = 0; //没有航班信息或航班信息不全，航班推荐无效
+                }
+
                 List<Map> list = JSON.parseArray(queryRestaurantJson.getString("restaurantInfo"), Map.class);
+                if (list.size() == 0) {
+                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
+                }
+                for (Map<String, Object> attribute : list) {
+                    if (!attribute.containsKey("restaurantCode") || !attribute.containsKey("restaurantWeight")
+                            || attribute.get("restaurantCode").equals(null) || attribute.get("restaurantWeight").equals(null)
+                            || attribute.get("restaurantCode").equals("") || attribute.get("restaurantWeight").equals("")) {
+                        return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
+                    }
+                }
+                ComparatorListSort comparatorListSort = new ComparatorListSort("restaurantWeight");
+                Collections.sort(list,comparatorListSort);
 
                 //过滤得到有合作的优惠餐厅
                 Map<String,Object> paramRestaurant = new HashMap<>();
@@ -183,55 +206,97 @@ public class BusinessService implements IBusinessService {
                 }
                 paramRestaurant.put("code", code.substring(0,code.length() - 1));
                 List<ItdRestaurant> itdRestaurantList = itdRestaurantMapper.getRestaurantListByCode(paramRestaurant);
+                if (itdRestaurantList.size() == 0) {
+                    LZResult<List<Map>> result = new LZResult<>(list);
+                    return JSON.toJSONString(result);
+                }
 
                 //根据地理位置确定推荐规则
-                Map<String,Object> paramPositionRule = new HashMap<>();
-                if (position.equals("机场内")) {
-                    paramPositionRule.put("ruleName", "用户定位在安检后");
-                } else if (position.equals("机场外")) {
-                    paramPositionRule.put("ruleName", "用户定位在安检前");
-                } else if (position.equals("到达区")) {
-                    paramPositionRule.put("ruleName", "用户定位在到达区");
+                Integer positionRuleWeight = 0;
+                JSONObject positionRuleContent = null;
+                if (positionFlag == 1) {
+                    String position = queryRestaurantJson.getString("position");
+                    Map<String,Object> paramPositionRule = new HashMap<>();
+                    if (position.equals("机场内")) {
+                        paramPositionRule.put("ruleName", "用户定位在安检后");
+                    } else if (position.equals("机场外")) {
+                        paramPositionRule.put("ruleName", "用户定位在安检前");
+                    } else if (position.equals("到达区")) {
+                        paramPositionRule.put("ruleName", "用户定位在到达区");
+                    }
+                    if (paramPositionRule.isEmpty()) {
+                        positionFlag = 0;
+                    } else {
+                        RecommendationRule positionRule = recommendationRuleMapper.getRecommendationRule(paramPositionRule);
+                        if (positionRule.equals(null)) {
+                            positionFlag = 0;
+                        } else {
+                            positionRuleContent = JSONObject.parseObject(positionRule.getRuleContent());
+                            positionRuleWeight = positionRule.getTypeWeight();
+                        }
+                    }
                 }
-                RecommendationRule positionRule = recommendationRuleMapper.getRecommendationRule(paramPositionRule);
 
-                //获取航班信息
-                Map<String,Object> paramFlightInfo = new HashMap<>();
-                paramFlightInfo.put("flightNo", queryRestaurantJson.getString("flightNo"));
-                paramFlightInfo.put("flightDate", queryRestaurantJson.getString("flightDate"));
-                TbdFlightInfo tbdFlightInfo = tbdFlightInfoMapper.getFlightInfoByFlightNo(paramFlightInfo);
 
                 //根据航班信息确定推荐规则
-//                SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-//                Date currentDate = simpleFormat.parse("2016-09-15 01:00");
-                Date currentDate = new Date();
-                Map<String,Object> paramFlightInfoRule = new HashMap<>();
-                if (tbdFlightInfo.getFlightStatus().equals("到达")) {
-                    Date flightArriveDate = tbdFlightInfo.getArriveTimeActual();
-                    int timeInterval = (int) (currentDate.getTime() - flightArriveDate.getTime())/(1000 * 60 * 60);
-                    if (timeInterval < 3) {
-                        paramFlightInfoRule.put("ruleName", "航班到达后3小时内");
+                Integer flightInfoRuleWeight = 0;
+                JSONObject flightInfoRuleContent = null;
+                if (flightInfoFlag == 1) {
+
+                    //获取航班信息
+                    Map<String,Object> paramFlightInfo = new HashMap<>();
+                    paramFlightInfo.put("flightNo", queryRestaurantJson.getString("flightNo"));
+                    paramFlightInfo.put("flightDate", queryRestaurantJson.getString("flightDate"));
+                    TbdFlightInfo tbdFlightInfo = tbdFlightInfoMapper.getFlightInfoByFlightNo(paramFlightInfo);
+
+                    //确定推荐规则
+                    if (!tbdFlightInfo.equals(null)) {
+                        Date currentDate = new Date();
+                        Map<String,Object> paramFlightInfoRule = new HashMap<>();
+                        if (tbdFlightInfo.getFlightStatus().equals("到达")) {
+                            Date flightArriveDate = tbdFlightInfo.getArriveTimeActual();
+                            int timeInterval = (int) (currentDate.getTime() - flightArriveDate.getTime())/(1000 * 60 * 60);
+                            if (timeInterval < 3) {
+                                paramFlightInfoRule.put("ruleName", "航班到达后3小时内");
+                            } else {
+                                LZResult<List<Map>> result = new LZResult<>(list);
+                                return JSON.toJSONString(result);
+                            }
+                        } else {
+                            Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
+                            int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
+                            if (timeInterval < 1) {
+                                paramFlightInfoRule.put("ruleName", "航班起飞1小时内");
+                            } else {
+                                paramFlightInfoRule.put("ruleName", "航班起飞1小时前");
+                            }
+                        }
+                        RecommendationRule flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
+                        if (!flightInfoRule.equals(null)) {
+                            flightInfoRuleContent = JSONObject.parseObject(flightInfoRule.getRuleContent());
+                            flightInfoRuleWeight = flightInfoRule.getTypeWeight();
+                        } else {
+                            flightInfoFlag = 0;
+                        }
+
                     } else {
-                        ComparatorListSort comparatorListSort = new ComparatorListSort("restaurantWeight");
-                        Collections.sort(list,comparatorListSort);
-                        LZResult<List<Map>> result = new LZResult<>(list);
-                        return JSON.toJSONString(result);
+                        flightInfoFlag = 0;
                     }
-                } else {
-                    Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
-                    int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
-                    if (timeInterval < 1) {
-                        paramFlightInfoRule.put("ruleName", "航班起飞1小时内");
-                    } else {
-                        paramFlightInfoRule.put("ruleName", "航班起飞1小时前");
-                    }
+
                 }
-                RecommendationRule flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
 
                 //获取用户行为规则
+                Integer userBehaviorRuleWeight = 0;
+                JSONObject userBehaviorRuleContent = null;
                 Map<String,Object> paramUserBehaviorRule = new HashMap<>();
                 paramUserBehaviorRule.put("ruleName", "用户app行为");
                 RecommendationRule userBehaviorRule = recommendationRuleMapper.getRecommendationRule(paramUserBehaviorRule);
+                if (userBehaviorRule.equals(null)) {
+                    userBehaviorFlag = 0;
+                } else {
+                    userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
+                    userBehaviorRuleWeight = userBehaviorRule.getTypeWeight();
+                }
 
                 //获取用户行为标签
                 Map<String,Object> paramUserBehaviorLabel = new HashMap<>();
@@ -239,87 +304,95 @@ public class BusinessService implements IBusinessService {
                 paramUserBehaviorLabel.put("typeName", "userRest");
                 paramUserBehaviorLabel.put("userId", queryRestaurantJson.getString("userId"));
                 List<UserRest> userRestList = getUserBehaviorLabel(paramUserBehaviorLabel);
+                if (userRestList.size() == 0) {
+                    userBehaviorFlag = 0;
+                }
                 paramUserBehaviorLabel.put("typeName", "userTags");
                 List<UserRest> userTagsList = getUserBehaviorLabel(paramUserBehaviorLabel);
 
                 //用户行为数据归一化处理
-                for (UserRest userRest : userRestList) {
-                    if (userRest.getConsumptionNum() != null) {
-                        userRest.setConsumptionNum(Math.atan(userRest.getConsumptionNum()) * 2/PI);
-                    } else {
-                        userRest.setConsumptionNum(0.0);
-                    }
-                    if (userRest.getCollectionNum() != null) {
-                        userRest.setCollectionNum(Math.atan(userRest.getCollectionNum()) * 2/PI);
-                    } else {
-                        userRest.setCollectionNum(0.0);
-                    }
-                    if (userRest.getCommentNum() != null) {
-                        userRest.setCommentNum(Math.atan(userRest.getCommentNum()) * 2/PI);
-                    } else {
-                        userRest.setCommentNum(0.0);
-                    }
-                    if (userRest.getUsageCounter() != null) {
-                        userRest.setUsageCounter(Math.atan(userRest.getUsageCounter()) * 2/PI);
-                    } else {
-                        userRest.setUsageCounter(0.0);
-                    }
-                    if (userRest.getBrowseNum() != null) {
-                        userRest.setBrowseNum(Math.atan(userRest.getBrowseNum()) * 2/PI);
-                    } else {
-                        userRest.setBrowseNum(0.0);
-                    }
-                    if (userRest.getBrowseHours() != null) {
-                        userRest.setBrowseHours(Math.atan(userRest.getBrowseHours()) * 2/PI);
-                    } else {
-                        userRest.setBrowseHours(0.0);
-                    }
-                    if (userRest.getAverageOrderAmount() != null) {
-                        userRest.setAverageOrderAmount(Math.atan(userRest.getAverageOrderAmount()) * 2/PI);
-                    } else {
-                        userRest.setAverageOrderAmount(0.0);
+                if (userBehaviorFlag == 1) {
+                    for (UserRest userRest : userRestList) {
+                        if (userRest.getConsumptionNum() != null) {
+                            userRest.setConsumptionNum(Math.atan(userRest.getConsumptionNum()) * 2/PI);
+                        } else {
+                            userRest.setConsumptionNum(0.0);
+                        }
+                        if (userRest.getCollectionNum() != null) {
+                            userRest.setCollectionNum(Math.atan(userRest.getCollectionNum()) * 2/PI);
+                        } else {
+                            userRest.setCollectionNum(0.0);
+                        }
+                        if (userRest.getCommentNum() != null) {
+                            userRest.setCommentNum(Math.atan(userRest.getCommentNum()) * 2/PI);
+                        } else {
+                            userRest.setCommentNum(0.0);
+                        }
+                        if (userRest.getUsageCounter() != null) {
+                            userRest.setUsageCounter(Math.atan(userRest.getUsageCounter()) * 2/PI);
+                        } else {
+                            userRest.setUsageCounter(0.0);
+                        }
+                        if (userRest.getBrowseNum() != null) {
+                            userRest.setBrowseNum(Math.atan(userRest.getBrowseNum()) * 2/PI);
+                        } else {
+                            userRest.setBrowseNum(0.0);
+                        }
+                        if (userRest.getBrowseHours() != null) {
+                            userRest.setBrowseHours(Math.atan(userRest.getBrowseHours()) * 2/PI);
+                        } else {
+                            userRest.setBrowseHours(0.0);
+                        }
+                        if (userRest.getAverageOrderAmount() != null) {
+                            userRest.setAverageOrderAmount(Math.atan(userRest.getAverageOrderAmount()) * 2/PI);
+                        } else {
+                            userRest.setAverageOrderAmount(0.0);
+                        }
                     }
                 }
 
                 //给餐厅打分
                 Double score = 0.0;
-                JSONObject positionRuleContent = JSONObject.parseObject(positionRule.getRuleContent());
-                JSONObject flightInfoRuleContent = JSONObject.parseObject(flightInfoRule.getRuleContent());
-                JSONObject userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
                 for(ItdRestaurant itdRestaurant : itdRestaurantList) {
-                    //计算地理位置得分和航班信息得分
-                    if (!itdRestaurant.getFdInspection().equals(null)) {
-                        score += positionRule.getTypeWeight() * positionRuleContent.getDouble(itdRestaurant.getFdInspection());
-                        score += flightInfoRule.getTypeWeight() * flightInfoRuleContent.getDouble(itdRestaurant.getFdInspection());
-                    } else {
-                        score += 0;
+                    //计算地理位置得分
+                    if (positionFlag == 1 && !itdRestaurant.getFdInspection().equals(null)) {
+                        score += positionRuleWeight * positionRuleContent.getDouble(itdRestaurant.getFdInspection());
+                    }
+
+                    //计算航班信息得分
+                    if (flightInfoFlag == 1 && !itdRestaurant.getFdInspection().equals(null)) {
+                        score += flightInfoRuleWeight * flightInfoRuleContent.getDouble(itdRestaurant.getFdInspection());
                     }
 
                     //计算用户行为得分
-                    Double behaviorScore = 0.0;
-                    for(UserRest userRest : userRestList) {
-                        if (userRest.getRestaurantCode().equals(itdRestaurant.getFdCode())) {
-                            behaviorScore += userRest.getConsumptionNum() * userBehaviorRuleContent.getDouble("consumptionNum");
-                            behaviorScore += userRest.getCollectionNum() * userBehaviorRuleContent.getDouble("collectionNum");
-                            behaviorScore += userRest.getCommentNum() * userBehaviorRuleContent.getDouble("commentNum");
-                            behaviorScore += userRest.getAverageOrderAmount() * userBehaviorRuleContent.getDouble("averageOrderAmount");
-                            behaviorScore += userRest.getUsageCounter() * userBehaviorRuleContent.getDouble("usageCounter");
-                            behaviorScore += userRest.getBrowseNum() * userBehaviorRuleContent.getDouble("browseNum");
-                            behaviorScore += userRest.getBrowseHours() * userBehaviorRuleContent.getDouble("browseHours");
-                            if (userRest.getMultitimeConsumption()) {
-                                behaviorScore += userBehaviorRuleContent.getDouble("isMultitimeConsumption");
-                            }
-                            if (itdRestaurant.getFdCls().equals("1")) {
-                                itdRestaurant.setFdCls("中餐");
-                            } else if (itdRestaurant.getFdCls().equals("0")) {
-                                itdRestaurant.setFdCls("西餐");
-                            }
-                            if (userTagsList.get(0).getRestaurantPreferences().equals(itdRestaurant.getFdCls())) {
-                                behaviorScore += userBehaviorRuleContent.getDouble("restaurantPreferences");
+                    if (userBehaviorFlag == 1) { //用户行为推荐有效
+                        Double behaviorScore = 0.0;
+                        for(UserRest userRest : userRestList) {
+                            if (userRest.getRestaurantCode().equals(itdRestaurant.getFdCode())) {
+                                behaviorScore += userRest.getConsumptionNum() * userBehaviorRuleContent.getDouble("consumptionNum");
+                                behaviorScore += userRest.getCollectionNum() * userBehaviorRuleContent.getDouble("collectionNum");
+                                behaviorScore += userRest.getCommentNum() * userBehaviorRuleContent.getDouble("commentNum");
+                                behaviorScore += userRest.getAverageOrderAmount() * userBehaviorRuleContent.getDouble("averageOrderAmount");
+                                behaviorScore += userRest.getUsageCounter() * userBehaviorRuleContent.getDouble("usageCounter");
+                                behaviorScore += userRest.getBrowseNum() * userBehaviorRuleContent.getDouble("browseNum");
+                                behaviorScore += userRest.getBrowseHours() * userBehaviorRuleContent.getDouble("browseHours");
+                                if (userRest.getMultitimeConsumption()) {
+                                    behaviorScore += userBehaviorRuleContent.getDouble("isMultitimeConsumption");
+                                }
+                                if (userTagsList.size() != 0) { //用户偏好推荐有效
+                                    if (itdRestaurant.getFdCls().equals("1")) {
+                                        itdRestaurant.setFdCls("中餐");
+                                    } else if (itdRestaurant.getFdCls().equals("0")) {
+                                        itdRestaurant.setFdCls("西餐");
+                                    }
+                                    if (userTagsList.get(0).getRestaurantPreferences().equals(itdRestaurant.getFdCls())) {
+                                        behaviorScore += userBehaviorRuleContent.getDouble("restaurantPreferences");
+                                    }
+                                }
                             }
                         }
+                        score += userBehaviorRuleWeight * behaviorScore;
                     }
-                    score += userBehaviorRule.getTypeWeight() * behaviorScore;
                     itdRestaurant.setScore(score);
                 }
 
@@ -333,9 +406,7 @@ public class BusinessService implements IBusinessService {
                         }
                     }
                 }
-                ComparatorListSort comparatorListSort = new ComparatorListSort("restaurantWeight");
                 Collections.sort(list,comparatorListSort);
-
                 LZResult<List<Map>> result = new LZResult<>(list);
                 return JSON.toJSONString(result);
             } else {
