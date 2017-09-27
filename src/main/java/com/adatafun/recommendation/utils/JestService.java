@@ -1,4 +1,4 @@
-package com.adatafun.recommendation.service;
+package com.adatafun.recommendation.utils;
 
 import com.google.gson.GsonBuilder;
 import io.searchbox.client.JestClient;

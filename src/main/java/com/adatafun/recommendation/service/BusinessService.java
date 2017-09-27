@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2014-2016 abel533@gmail.com
+ * Copyright (c) 2017-2019 wangzhentao@iairportcloud.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,6 @@
 
 package com.adatafun.recommendation.service;
 
-import com.adatafun.recommendation.Main;
 import com.adatafun.recommendation.mapper.ItdRestaurantMapper;
 import com.adatafun.recommendation.mapper.RecommendationRuleMapper;
 import com.adatafun.recommendation.mapper.TbdFlightInfoMapper;
@@ -40,7 +39,6 @@ import com.zhiweicloud.guest.APIUtil.LZStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static java.lang.Math.PI;
@@ -157,13 +155,13 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 推荐引擎 - 推荐餐厅
-     * @para userId 用户id
-     * @para flightNo 航班号
-     * @para position 用户位置信息
-     * @para restaurantInfo 排序前餐厅列表
-     * @return 排序后餐厅列表
+     * @param queryRestaurantJson
+     * userId 用户id
+     * flightNo 航班号
+     * position 用户位置信息
+     * restaurantInfo 排序前餐厅列表
      */
-    public String getRestaurant(final JSONObject queryRestaurantJson){
+    private String getRestaurant(final JSONObject queryRestaurantJson){
 
         try {
             if (queryRestaurantJson.containsKey("userId")
@@ -171,16 +169,13 @@ public class BusinessService implements IBusinessService {
 
                 int positionFlag = 1, flightInfoFlag = 1, userBehaviorFlag = 1;
                 if (!queryRestaurantJson.containsKey("position") ||
-                        queryRestaurantJson.getString("position").equals(null) ||
                         queryRestaurantJson.getString("position").equals("")) {
                     positionFlag = 0; //没有位置信息，位置推荐无效
                 }
                 if (!queryRestaurantJson.containsKey("flightNo") ||
                         !queryRestaurantJson.containsKey("flightDate") ||
-                        queryRestaurantJson.getString("flightNo").equals(null) ||
                         queryRestaurantJson.getString("flightNo").equals("") ||
-                        queryRestaurantJson.getString("flightDate").equals("") ||
-                        queryRestaurantJson.getString("flightDate").equals(null)) {
+                        queryRestaurantJson.getString("flightDate").equals("")) {
                     flightInfoFlag = 0; //没有航班信息或航班信息不全，航班推荐无效
                 }
 
@@ -188,20 +183,19 @@ public class BusinessService implements IBusinessService {
                 if (list.size() == 0) {
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_EMPTY.value(), LZStatus.DATA_EMPTY.display()));
                 }
-                for (Map<String, Object> attribute : list) {
+                for (Map attribute : list) {
                     if (!attribute.containsKey("restaurantCode") || !attribute.containsKey("restaurantWeight")
-                            || attribute.get("restaurantCode").equals(null) || attribute.get("restaurantWeight").equals(null)
                             || attribute.get("restaurantCode").equals("") || attribute.get("restaurantWeight").equals("")) {
                         return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                     }
                 }
                 ComparatorListSort comparatorListSort = new ComparatorListSort("restaurantWeight");
-                Collections.sort(list,comparatorListSort);
+                list.sort(comparatorListSort);
 
                 //过滤得到有合作的优惠餐厅
                 Map<String,Object> paramRestaurant = new HashMap<>();
-                StringBuffer code = new StringBuffer();
-                for(Map<String, Object> attribute : list) {
+                StringBuilder code = new StringBuilder();
+                for(Map attribute : list) {
                     code.append("'").append(attribute.get("restaurantCode").toString()).append("'").append(",");
                 }
                 paramRestaurant.put("code", code.substring(0,code.length() - 1));
@@ -217,18 +211,22 @@ public class BusinessService implements IBusinessService {
                 if (positionFlag == 1) {
                     String position = queryRestaurantJson.getString("position");
                     Map<String,Object> paramPositionRule = new HashMap<>();
-                    if (position.equals("机场内")) {
-                        paramPositionRule.put("ruleName", "用户定位在安检后");
-                    } else if (position.equals("机场外")) {
-                        paramPositionRule.put("ruleName", "用户定位在安检前");
-                    } else if (position.equals("到达区")) {
-                        paramPositionRule.put("ruleName", "用户定位在到达区");
+                    switch (position) {
+                        case "机场内":
+                            paramPositionRule.put("ruleName", "用户定位在安检后");
+                            break;
+                        case "机场外":
+                            paramPositionRule.put("ruleName", "用户定位在安检前");
+                            break;
+                        case "到达区":
+                            paramPositionRule.put("ruleName", "用户定位在到达区");
+                            break;
                     }
                     if (paramPositionRule.isEmpty()) {
                         positionFlag = 0;
                     } else {
                         RecommendationRule positionRule = recommendationRuleMapper.getRecommendationRule(paramPositionRule);
-                        if (positionRule.equals(null)) {
+                        if (positionRule.equals(new RecommendationRule())) {
                             positionFlag = 0;
                         } else {
                             positionRuleContent = JSONObject.parseObject(positionRule.getRuleContent());
@@ -250,7 +248,7 @@ public class BusinessService implements IBusinessService {
                     TbdFlightInfo tbdFlightInfo = tbdFlightInfoMapper.getFlightInfoByFlightNo(paramFlightInfo);
 
                     //确定推荐规则
-                    if (!tbdFlightInfo.equals(null)) {
+                    if (!tbdFlightInfo.equals(new TbdFlightInfo())) {
                         Date currentDate = new Date();
                         Map<String,Object> paramFlightInfoRule = new HashMap<>();
                         if (tbdFlightInfo.getFlightStatus().equals("到达")) {
@@ -272,7 +270,7 @@ public class BusinessService implements IBusinessService {
                             }
                         }
                         RecommendationRule flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
-                        if (!flightInfoRule.equals(null)) {
+                        if (!flightInfoRule.equals(new RecommendationRule())) {
                             flightInfoRuleContent = JSONObject.parseObject(flightInfoRule.getRuleContent());
                             flightInfoRuleWeight = flightInfoRule.getTypeWeight();
                         } else {
@@ -291,7 +289,7 @@ public class BusinessService implements IBusinessService {
                 Map<String,Object> paramUserBehaviorRule = new HashMap<>();
                 paramUserBehaviorRule.put("ruleName", "用户app行为");
                 RecommendationRule userBehaviorRule = recommendationRuleMapper.getRecommendationRule(paramUserBehaviorRule);
-                if (userBehaviorRule.equals(null)) {
+                if (userBehaviorRule.equals(new RecommendationRule())) {
                     userBehaviorFlag = 0;
                 } else {
                     userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
@@ -304,6 +302,7 @@ public class BusinessService implements IBusinessService {
                 paramUserBehaviorLabel.put("typeName", "userRest");
                 paramUserBehaviorLabel.put("userId", queryRestaurantJson.getString("userId"));
                 List<UserRest> userRestList = getUserBehaviorLabel(paramUserBehaviorLabel);
+                assert userRestList != null;
                 if (userRestList.size() == 0) {
                     userBehaviorFlag = 0;
                 }
@@ -355,12 +354,12 @@ public class BusinessService implements IBusinessService {
                 Double score = 0.0;
                 for(ItdRestaurant itdRestaurant : itdRestaurantList) {
                     //计算地理位置得分
-                    if (positionFlag == 1 && !itdRestaurant.getFdInspection().equals(null)) {
+                    if (positionFlag == 1 && !itdRestaurant.getFdInspection().equals("")) {
                         score += positionRuleWeight * positionRuleContent.getDouble(itdRestaurant.getFdInspection());
                     }
 
                     //计算航班信息得分
-                    if (flightInfoFlag == 1 && !itdRestaurant.getFdInspection().equals(null)) {
+                    if (flightInfoFlag == 1 && !itdRestaurant.getFdInspection().equals("")) {
                         score += flightInfoRuleWeight * flightInfoRuleContent.getDouble(itdRestaurant.getFdInspection());
                     }
 
@@ -379,6 +378,7 @@ public class BusinessService implements IBusinessService {
                                 if (userRest.getMultitimeConsumption()) {
                                     behaviorScore += userBehaviorRuleContent.getDouble("isMultitimeConsumption");
                                 }
+                                assert userTagsList != null;
                                 if (userTagsList.size() != 0) { //用户偏好推荐有效
                                     if (itdRestaurant.getFdCls().equals("1")) {
                                         itdRestaurant.setFdCls("中餐");
@@ -398,7 +398,7 @@ public class BusinessService implements IBusinessService {
 
                 //排序
                 for(ItdRestaurant itdRestaurant : itdRestaurantList) {
-                    for(Map<String, Object> attribute : list) {
+                    for(Map attribute : list) {
                         if (itdRestaurant.getFdCode().equals(attribute.get("restaurantCode").toString())) {
                             Double tempScore = Integer.parseInt(attribute.get("restaurantWeight").toString()) * itdRestaurant.getScore();
                             Integer resultScore = tempScore.intValue();
@@ -406,7 +406,7 @@ public class BusinessService implements IBusinessService {
                         }
                     }
                 }
-                Collections.sort(list,comparatorListSort);
+                list.sort(comparatorListSort);
                 LZResult<List<Map>> result = new LZResult<>(list);
                 return JSON.toJSONString(result);
             } else {
@@ -420,11 +420,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 单值完全匹配查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param param
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public List<UserRest> getUserBehaviorLabel(Map<String, Object> param) {
+    private List<UserRest> getUserBehaviorLabel(Map<String, Object> param) {
 
         try {
             elasticSearchService.setUp();
@@ -440,10 +440,10 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 创建索引
-     * @para indexName 索引名称
-     * @return
+     * @param request
+     * indexName 索引名称
      */
-    public String createIndex(JSONObject request) {
+    private String createIndex(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -461,11 +461,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * Put映射
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String createIndexMapping(JSONObject request) {
+    private String createIndexMapping(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -484,11 +484,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * Get映射
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String getIndexMapping(JSONObject request) {
+    private String getIndexMapping(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -507,11 +507,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 索引文档
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String index(JSONObject request) {
+    private String index(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -536,11 +536,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 单值完全匹配查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String termQuery(JSONObject request) {
+    private String termQuery(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -560,11 +560,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 多值完全匹配查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String termsQuery(JSONObject request) {
+    private String termsQuery(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -584,11 +584,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 通配符和正则表达式查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String wildcardQuery(JSONObject request) {
+    private String wildcardQuery(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -607,11 +607,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 前缀查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String prefixQuery(JSONObject request) {
+    private String prefixQuery(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -630,11 +630,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 区间查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String rangeQuery(JSONObject request) {
+    private String rangeQuery(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -653,11 +653,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 文本检索
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String queryString(JSONObject request) {
+    private String queryString(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -676,11 +676,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 统计总数
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String count(JSONObject request) {
+    private String count(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -699,11 +699,11 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 搜索文档 - 通过id查询
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
      */
-    public String getById(JSONObject request) {
+    private String getById(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -723,12 +723,12 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 删除索引文档 - 依据id
-     * @para indexName 索引名称
-     * @para typeName 索引类型
-     * @para id 文档id
-     * @return
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     * id 文档id
      */
-    public String deleteIndexDocument(JSONObject request) {
+    private String deleteIndexDocument(JSONObject request) {
 
         try {
             elasticSearchService.setUp();
@@ -748,10 +748,9 @@ public class BusinessService implements IBusinessService {
 
     /**
      * 删除索引 - 依据索引名称
-     * @para indexName 索引名称
-     * @return
+     * @param request  indexName 索引名称
      */
-    public String deleteIndex(JSONObject request) {
+    private String deleteIndex(JSONObject request) {
 
         try {
             elasticSearchService.setUp();

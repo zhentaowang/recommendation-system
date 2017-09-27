@@ -2,14 +2,11 @@ package com.adatafun.recommendation.service;
 
 import com.adatafun.recommendation.model.User;
 import com.adatafun.recommendation.model.UserRest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.adatafun.recommendation.utils.JestService;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.SearchResult;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -17,11 +14,8 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 public class ElasticSearchService {
 
@@ -41,14 +35,13 @@ public class ElasticSearchService {
         jestService.closeJestClient(jestClient);
     }
 
-    public boolean createIndex(Map<String, Object> param) throws Exception {
+    boolean createIndex(Map<String, Object> param) throws Exception {
 
-        boolean result = jestService.createIndex(jestClient, param.get("indexName").toString());
-        return result;
+        return jestService.createIndex(jestClient, param.get("indexName").toString());
 
     }
 
-    public boolean createIndexMapping(Map<String, Object> param) throws Exception {
+    boolean createIndexMapping(Map<String, Object> param) throws Exception {
 
 //        String source = "{\"" + param.get("typeName").toString() + "\":{\"properties\":{"
 //                + "\"id\":{\"type\":\"integer\"}"
@@ -67,30 +60,28 @@ public class ElasticSearchService {
                 + ",\"averageOrderAmount\":{\"type\":\"double\",\"index\":\"not_analyzed\"}"
                 + ",\"restaurantPreferences\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
                 + "}}}";
-        boolean result = jestService.createIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), source);
-        return result;
+        return jestService.createIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), source);
 
     }
 
-    public String getIndexMapping(Map<String, Object> param) throws Exception {
+    String getIndexMapping(Map<String, Object> param) throws Exception {
 
-        String result = jestService.getIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString());
-        return result;
-
-    }
-
-    public boolean index(Map<String, Object> param, List<Object> userList) throws Exception {
-
-        boolean result = jestService.index(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), userList);
-        return result;
+        return jestService.getIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString());
 
     }
 
-    public List<UserRest> termQuery(Map<String, Object> param) throws Exception {
+    boolean index(Map<String, Object> param, List<Object> userList) throws Exception {
+
+        return jestService.index(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), userList);
+
+    }
+
+    List<UserRest> termQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                .termQuery("userId", param.get("userId").toString());//单值完全匹配查询
+        QueryBuilder queryBuilder;//单值完全匹配查询
+        queryBuilder = QueryBuilders
+                .termQuery("userId", param.get("userId").toString());
         searchSourceBuilder.query(queryBuilder);
         searchSourceBuilder.size(10);
         searchSourceBuilder.from(0);
@@ -106,11 +97,12 @@ public class ElasticSearchService {
 
     }
 
-    public List<User> termsQuery(Map<String, Object> param) throws Exception {
+    List<User> termsQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
-                .termsQuery("name", new String[]{ "T:o\"m-", "J,e{r}r;y:" });//多值完全匹配查询
+                /* 多值完全匹配查询 */
+                .termsQuery("name", "T:o\"m-", "J,e{r}r;y:");
         searchSourceBuilder.query(queryBuilder);
         searchSourceBuilder.size(10);
         searchSourceBuilder.from(0);
@@ -125,7 +117,7 @@ public class ElasticSearchService {
 
     }
 
-    public List<UserRest> wildcardQuery(Map<String, Object> param) throws Exception {
+    List<UserRest> wildcardQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -144,7 +136,7 @@ public class ElasticSearchService {
 
     }
 
-    public List<UserRest> prefixQuery(Map<String, Object> param) throws Exception {
+    List<UserRest> prefixQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -163,7 +155,7 @@ public class ElasticSearchService {
 
     }
 
-    public List<User> rangeQuery(Map<String, Object> param) throws Exception {
+    List<User> rangeQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -186,7 +178,7 @@ public class ElasticSearchService {
 
     }
 
-    public List<User> queryString(Map<String, Object> param) throws Exception {
+    List<User> queryString(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -205,7 +197,7 @@ public class ElasticSearchService {
 
     }
 
-    public Double count(Map<String, Object> param) throws Exception {
+    Double count(Map<String, Object> param) throws Exception {
 
         String[] name = new String[]{ "T:o\"m-", "Jerry" };
         String from = "2016-09-01T00:00:00";
@@ -216,12 +208,11 @@ public class ElasticSearchService {
                 .must(QueryBuilders.rangeQuery("birth").gte(from).lte(to));
         searchSourceBuilder.query(queryBuilder);
         String query = searchSourceBuilder.toString();
-        Double count = jestService.count(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        return count;
+        return jestService.count(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
 
     }
 
-    public UserRest get(Map<String, Object> param) throws Exception {
+    UserRest get(Map<String, Object> param) throws Exception {
 
         UserRest userRest = new UserRest();
         JestResult result = jestService.get(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
@@ -234,17 +225,15 @@ public class ElasticSearchService {
 
     }
 
-    public boolean deleteIndexDocument(Map<String, Object> param) throws Exception {
+    boolean deleteIndexDocument(Map<String, Object> param) throws Exception {
 
-        boolean result = jestService.delete(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
-        return result;
+        return jestService.delete(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
 
     }
 
-    public boolean deleteIndex(Map<String, Object> param) throws Exception {
+    boolean deleteIndex(Map<String, Object> param) throws Exception {
 
-        boolean result = jestService.delete(jestClient, param.get("indexName").toString());
-        return result;
+        return jestService.delete(jestClient, param.get("indexName").toString());
     }
 
 }
