@@ -3,7 +3,9 @@ package com.adatafun.recommendation.model;
 import io.searchbox.annotations.JestId;
 
 /**
- * Created by wzt on 2017/9/18.
+ * UserRest.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 public class UserRest {
 
@@ -29,7 +31,7 @@ public class UserRest {
         // TODO Auto-generated constructor stub
     }
     public UserRest(String id, String userId, String restaurantCode, Double consumptionNum, Double collectionNum, Double commentNum,
-                    Double usageCounter, Double browseNum, Double browseHours, Boolean multitimeConsumption,
+                    Double usageCounter, Double browseNum, Double browseHours, Boolean multiTimeConsumption,
                     String  perCustomerTransaction, Double  averageOrderAmount, String  restaurantPreferences) {
         super();
         this.id = id;
@@ -41,7 +43,7 @@ public class UserRest {
         this.usageCounter = usageCounter;
         this.browseNum = browseNum;
         this.browseHours = browseHours;
-        this.multitimeConsumption = multitimeConsumption;
+        this.multitimeConsumption = multiTimeConsumption;
         this.perCustomerTransaction = perCustomerTransaction;
         this.averageOrderAmount = averageOrderAmount;
         this.restaurantPreferences = restaurantPreferences;
@@ -50,7 +52,7 @@ public class UserRest {
     @Override
     public String toString() {
         return "UserRest [id=" + id + ", userId=" + userId + ", restaurantCode=" + restaurantCode + ", consumptionNum=" + consumptionNum +
-                ", collectionNum=" + collectionNum + ", commentNum=" + commentNum + ", multitimeConsumption=" + multitimeConsumption +
+                ", collectionNum=" + collectionNum + ", commentNum=" + commentNum + ", multiTimeConsumption=" + multitimeConsumption +
                 ", usageCounter=" + usageCounter + ", browseNum=" + browseNum + ", browseHours=" + browseHours +
                 ", perCustomerTransaction=" + perCustomerTransaction + ", averageOrderAmount=" + averageOrderAmount +
                 ", restaurantPreferences=" + restaurantPreferences + "]";
@@ -128,12 +130,12 @@ public class UserRest {
         this.browseHours = browseHours;
     }
 
-    public Boolean getMultitimeConsumption() {
+    public Boolean getMultiTimeConsumption() {
         return multitimeConsumption;
     }
 
-    public void setMultitimeConsumption(Boolean multitimeConsumption) {
-        multitimeConsumption = multitimeConsumption;
+    public void setMultiTimeConsumption(Boolean multiTimeConsumption) {
+        this.multitimeConsumption = multiTimeConsumption;
     }
 
     public String getPerCustomerTransaction() {

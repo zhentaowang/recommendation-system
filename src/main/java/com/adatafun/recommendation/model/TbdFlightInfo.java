@@ -15,10 +15,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * TbdFlightInfo.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2017-09-21 13:53:06 Created By wzt
-*/
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
+ */
 @ApiModel(value="TbdFlightInfo",description="tbd_flight_info")
 public class TbdFlightInfo {
     @ApiModelProperty(value="",name="id", required=true)

@@ -2,238 +2,375 @@ package com.adatafun.recommendation.service;
 
 import com.adatafun.recommendation.model.User;
 import com.adatafun.recommendation.model.UserRest;
-import com.adatafun.recommendation.utils.JestService;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestResult;
-import io.searchbox.core.SearchResult;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.junit.After;
-import org.junit.Before;
+import com.adatafun.recommendation.utils.ElasticSearch;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.zhiweicloud.guest.APIUtil.LXResult;
+import com.zhiweicloud.guest.APIUtil.LZResult;
+import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ElasticSearchService.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
+ */
+@Service
 public class ElasticSearchService {
 
-    private JestService jestService;
-    private JestClient jestClient;
+     private static ElasticSearch elasticSearch = new ElasticSearch();
+    
+    /**
+     * 搜索文档 - 单值完全匹配查询
+     * @param param
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    static List<UserRest> getUserBehaviorLabel(Map<String, Object> param) {
 
-    @Before
-    public void setUp() throws Exception {
-
-        jestService = new JestService();
-        jestClient = jestService.getJestClient();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-        jestService.closeJestClient(jestClient);
-    }
-
-    boolean createIndex(Map<String, Object> param) throws Exception {
-
-        return jestService.createIndex(jestClient, param.get("indexName").toString());
-
-    }
-
-    boolean createIndexMapping(Map<String, Object> param) throws Exception {
-
-//        String source = "{\"" + param.get("typeName").toString() + "\":{\"properties\":{"
-//                + "\"id\":{\"type\":\"integer\"}"
-//                + ",\"name\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
-//                + ",\"birth\":{\"type\":\"date\",\"format\":\"strict_date_optional_time||epoch_millis\"}"
-//                + "}}}";
-        String source = "{\"" + param.get("typeName").toString() + "\":{\"properties\":{"
-                + "\"id\":{\"type\":\"string\"}"
-                + "\"userId\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
-                + ",\"restaurantCode\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
-                + ",\"consumptionNum\":{\"type\":\"integer\",\"index\":\"not_analyzed\"}"
-                + ",\"collectionNum\":{\"type\":\"integer\",\"index\":\"not_analyzed\"}"
-                + ",\"commentNum\":{\"type\":\"integer\",\"index\":\"not_analyzed\"}"
-                + ",\"multitimeConsumption\":{\"type\":\"boolean\",\"index\":\"not_analyzed\"}"
-                + ",\"perCustomerTransaction\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
-                + ",\"averageOrderAmount\":{\"type\":\"double\",\"index\":\"not_analyzed\"}"
-                + ",\"restaurantPreferences\":{\"type\":\"string\",\"index\":\"not_analyzed\"}"
-                + "}}}";
-        return jestService.createIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), source);
-
-    }
-
-    String getIndexMapping(Map<String, Object> param) throws Exception {
-
-        return jestService.getIndexMapping(jestClient, param.get("indexName").toString(), param.get("typeName").toString());
-
-    }
-
-    boolean index(Map<String, Object> param, List<Object> userList) throws Exception {
-
-        return jestService.index(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), userList);
-
-    }
-
-    List<UserRest> termQuery(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder;//单值完全匹配查询
-        queryBuilder = QueryBuilders
-                .termQuery("userId", param.get("userId").toString());
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        System.out.println(query);
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    List<User> termsQuery(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                /* 多值完全匹配查询 */
-                .termsQuery("name", "T:o\"m-", "J,e{r}r;y:");
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
-        List<User> userList = new ArrayList<>();
-        for (SearchResult.Hit<User, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    List<UserRest> wildcardQuery(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                .wildcardQuery("restaurantCode", "*000*");//通配符和正则表达式查询
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    List<UserRest> prefixQuery(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                .prefixQuery("restaurantCode", "R");//前缀查询
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    List<User> rangeQuery(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                .rangeQuery("birth")
-                .gte("2017-09-01T00:00:00")
-                .lte("2017-10-01T00:00:00")
-                .includeLower(true)
-                .includeUpper(true);//区间查询
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
-        List<User> userList = new ArrayList<>();
-        for (SearchResult.Hit<User, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    List<User> queryString(Map<String, Object> param) throws Exception {
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                .queryStringQuery(QueryParser.escape("T:o\""));//文本检索，应该是将查询的词先分成词库中存在的词，然后分别去检索，存在任一存在的词即返回，查询词分词后是OR的关系。需要转义特殊字符
-        searchSourceBuilder.query(queryBuilder);
-        searchSourceBuilder.size(10);
-        searchSourceBuilder.from(0);
-        String query = searchSourceBuilder.toString();
-        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
-        List<User> userList = new ArrayList<>();
-        for (SearchResult.Hit<User, Void> hit : hits) {
-            userList.add(hit.source);
-        }
-        return userList;
-
-    }
-
-    Double count(Map<String, Object> param) throws Exception {
-
-        String[] name = new String[]{ "T:o\"m-", "Jerry" };
-        String from = "2016-09-01T00:00:00";
-        String to = "2016-10-01T00:00:00";
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.termsQuery("name", name))
-                .must(QueryBuilders.rangeQuery("birth").gte(from).lte(to));
-        searchSourceBuilder.query(queryBuilder);
-        String query = searchSourceBuilder.toString();
-        return jestService.count(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-
-    }
-
-    UserRest get(Map<String, Object> param) throws Exception {
-
-        UserRest userRest = new UserRest();
-        JestResult result = jestService.get(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
-        if (result.isSucceeded()) {
-            userRest = result.getSourceAsObject(UserRest.class);
-            return userRest;
-        } else {
-            return userRest;
+        try {
+            elasticSearch.setUp();
+            List<UserRest> result = elasticSearch.termQuery(param);
+            elasticSearch.tearDown();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
 
     }
 
-    boolean deleteIndexDocument(Map<String, Object> param) throws Exception {
+    /**
+     * 创建索引
+     * @param request
+     * indexName 索引名称
+     */
+    public static String createIndex(JSONObject request) {
 
-        return jestService.delete(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            elasticSearch.createIndex(param);
+            elasticSearch.tearDown();
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
 
     }
 
-    boolean deleteIndex(Map<String, Object> param) throws Exception {
+    /**
+     * Put映射
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String createIndexMapping(JSONObject request) {
 
-        return jestService.delete(jestClient, param.get("indexName").toString());
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            elasticSearch.createIndexMapping(param);
+            elasticSearch.tearDown();
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
     }
 
+    /**
+     * Get映射
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String getIndexMapping(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<String> result = new LZResult<>(elasticSearch.getIndexMapping(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 索引文档
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String index(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            List<Object> userList = new ArrayList<>();
+            JSONArray jsonArray = JSON.parseArray(request.getString("data"));
+            for (int i = 0; i < jsonArray.size(); i++) {
+                UserRest userRest = JSON.toJavaObject(jsonArray.getJSONObject(i), UserRest.class);
+                userList.add(userRest);
+            }
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            elasticSearch.index(param, userList);
+            elasticSearch.tearDown();
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 单值完全匹配查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String termQuery(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            param.put("userId", request.getString("userId"));
+            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.termQuery(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 多值完全匹配查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String termsQuery(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            param.put("name", request.getString("name"));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.termsQuery(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 通配符和正则表达式查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String wildcardQuery(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.wildcardQuery(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 前缀查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String prefixQuery(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.prefixQuery(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 区间查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String rangeQuery(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.rangeQuery(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 文本检索
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String queryString(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.queryString(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 统计总数
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String count(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            LZResult<Double> result = new LZResult<>(elasticSearch.count(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 通过id查询
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    public static String getById(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            param.put("id", request.getString("id"));
+            LZResult<UserRest> result = new LZResult<>(elasticSearch.get(param));
+            elasticSearch.tearDown();
+            return JSON.toJSONString(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 删除索引文档 - 依据id
+     * @param request
+     * indexName 索引名称
+     * typeName 索引类型
+     * id 文档id
+     */
+    public static String deleteIndexDocument(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            param.put("typeName", request.getString("typeName"));
+            param.put("id", request.getString("id"));
+            elasticSearch.deleteIndexDocument(param);
+            elasticSearch.tearDown();
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
+
+    /**
+     * 删除索引 - 依据索引名称
+     * @param request  indexName 索引名称
+     */
+    public static String deleteIndex(JSONObject request) {
+
+        try {
+            elasticSearch.setUp();
+            Map<String, Object> param = new HashMap<>();
+            param.put("indexName", request.getString("indexName"));
+            elasticSearch.deleteIndex(param);
+            elasticSearch.tearDown();
+            return JSON.toJSONString(LXResult.build(LZStatus.SUCCESS.value(), LZStatus.SUCCESS.display()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+
+    }
 }

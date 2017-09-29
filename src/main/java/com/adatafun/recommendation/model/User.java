@@ -2,10 +2,10 @@ package com.adatafun.recommendation.model;
 
 import io.searchbox.annotations.JestId;
 
-import java.util.Date;
-
 /**
- * Created by wzt on 2017/9/3.
+ * User.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 public class User {
 

@@ -5,7 +5,9 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 
 /**
- * Created by wzt on 2017/9/3.
+ * ESFactory.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 public class ESFactory {
     private static JestHttpClient client;

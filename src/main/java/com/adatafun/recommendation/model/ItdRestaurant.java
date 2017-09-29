@@ -8,18 +8,13 @@ package com.adatafun.recommendation.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * ItdRestaurant.java
- * Copyright(C) 2016 杭州量子金融信息服务有限公司
- * https://www.zhiweicloud.com
- * 2017-09-20 17:28:49 Created By wzt
-*/
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
+ */
 @ApiModel(value="ItdRestaurant",description="itd_restaurant")
 public class ItdRestaurant {
     @ApiModelProperty(value="",name="fdId")

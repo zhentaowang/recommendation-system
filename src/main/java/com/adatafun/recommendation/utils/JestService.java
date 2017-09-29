@@ -14,7 +14,9 @@ import io.searchbox.indices.mapping.PutMapping;
 import java.util.List;
 
 /**
- * Created by wzt on 2017/9/3.
+ * JestService.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 public class JestService {
 

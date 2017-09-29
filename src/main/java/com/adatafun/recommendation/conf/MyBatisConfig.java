@@ -14,7 +14,9 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * Created by wangzhentao@iairportcloud.com on 2016/09/02.
+ * MyBatisConfig.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 @Configuration
 @EnableTransactionManagement
@@ -68,7 +70,7 @@ public class MyBatisConfig {
         return sqlSessionFactoryBean;
     }
 
-    public void druidSettings(DruidDataSource druidDataSource) throws Exception{
+    private void druidSettings(DruidDataSource druidDataSource) throws Exception{
         druidDataSource.setMaxActive(40);
         druidDataSource.setInitialSize(3);
         druidDataSource.setUseUnfairLock(true);

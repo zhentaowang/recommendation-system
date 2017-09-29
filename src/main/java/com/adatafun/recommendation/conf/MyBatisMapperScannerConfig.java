@@ -31,8 +31,9 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- *
- * Created by wangzhentao@iairportcloud.com on 2016/09/02
+ * MyBatisMapperScannerConfig.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 @Configuration
 //TODO 注意，由于MapperScannerConfigurer执行的比较早，所以必须有下面的注解

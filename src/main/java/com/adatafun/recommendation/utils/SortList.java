@@ -1,13 +1,13 @@
 package com.adatafun.recommendation.utils;
 
-import com.alibaba.fastjson.JSONObject;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Created by wzt on 2017/9/25.
+ * SortList.java
+ * Copyright(C) 2017 杭州风数科技有限公司
+ * Created by wzt on 05/09/2017.
  */
 public class SortList<E>{
 
