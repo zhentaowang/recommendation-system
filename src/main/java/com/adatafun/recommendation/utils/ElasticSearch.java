@@ -1,7 +1,6 @@
 package com.adatafun.recommendation.utils;
 
 import com.adatafun.recommendation.model.User;
-import com.adatafun.recommendation.model.UserRest;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.SearchResult;
@@ -80,7 +79,7 @@ public class ElasticSearch {
 
     }
 
-    public List<UserRest> termQuery(Map<String, Object> param) throws Exception {
+    public List<User> termQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder;//单值完全匹配查询
@@ -92,9 +91,9 @@ public class ElasticSearch {
         String query = searchSourceBuilder.toString();
         System.out.println(query);
         SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
+        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
+        List<User> userList = new ArrayList<>();
+        for (SearchResult.Hit<User, Void> hit : hits) {
             userList.add(hit.source);
         }
         return userList;
@@ -121,7 +120,7 @@ public class ElasticSearch {
 
     }
 
-    public List<UserRest> wildcardQuery(Map<String, Object> param) throws Exception {
+    public List<User> wildcardQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -131,16 +130,16 @@ public class ElasticSearch {
         searchSourceBuilder.from(0);
         String query = searchSourceBuilder.toString();
         SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
+        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
+        List<User> userList = new ArrayList<>();
+        for (SearchResult.Hit<User, Void> hit : hits) {
             userList.add(hit.source);
         }
         return userList;
 
     }
 
-    public List<UserRest> prefixQuery(Map<String, Object> param) throws Exception {
+    public List<User> prefixQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         QueryBuilder queryBuilder = QueryBuilders
@@ -150,9 +149,9 @@ public class ElasticSearch {
         searchSourceBuilder.from(0);
         String query = searchSourceBuilder.toString();
         SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
-        List<SearchResult.Hit<UserRest, Void>> hits = result.getHits(UserRest.class);
-        List<UserRest> userList = new ArrayList<>();
-        for (SearchResult.Hit<UserRest, Void> hit : hits) {
+        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
+        List<User> userList = new ArrayList<>();
+        for (SearchResult.Hit<User, Void> hit : hits) {
             userList.add(hit.source);
         }
         return userList;
@@ -216,15 +215,15 @@ public class ElasticSearch {
 
     }
 
-    public UserRest get(Map<String, Object> param) throws Exception {
+    public User get(Map<String, Object> param) throws Exception {
 
-        UserRest userRest = new UserRest();
+        User user = new User();
         JestResult result = jestService.get(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), param.get("id").toString());
         if (result.isSucceeded()) {
-            userRest = result.getSourceAsObject(UserRest.class);
-            return userRest;
+            user = result.getSourceAsObject(User.class);
+            return user;
         } else {
-            return userRest;
+            return user;
         }
 
     }

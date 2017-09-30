@@ -1,7 +1,6 @@
 package com.adatafun.recommendation.service;
 
 import com.adatafun.recommendation.model.User;
-import com.adatafun.recommendation.model.UserRest;
 import com.adatafun.recommendation.utils.ElasticSearch;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -32,11 +31,11 @@ public class ElasticSearchService {
      * indexName 索引名称
      * typeName 索引类型
      */
-    static List<UserRest> getUserBehaviorLabel(Map<String, Object> param) {
+    static List<User> getUserBehaviorLabel(Map<String, Object> param) {
 
         try {
             elasticSearch.setUp();
-            List<UserRest> result = elasticSearch.termQuery(param);
+            List<User> result = elasticSearch.termQuery(param);
             elasticSearch.tearDown();
             return result;
         } catch (Exception e) {
@@ -126,8 +125,8 @@ public class ElasticSearchService {
             List<Object> userList = new ArrayList<>();
             JSONArray jsonArray = JSON.parseArray(request.getString("data"));
             for (int i = 0; i < jsonArray.size(); i++) {
-                UserRest userRest = JSON.toJavaObject(jsonArray.getJSONObject(i), UserRest.class);
-                userList.add(userRest);
+                User user = JSON.toJavaObject(jsonArray.getJSONObject(i), User.class);
+                userList.add(user);
             }
             Map<String, Object> param = new HashMap<>();
             param.put("indexName", request.getString("indexName"));
@@ -156,7 +155,7 @@ public class ElasticSearchService {
             param.put("indexName", request.getString("indexName"));
             param.put("typeName", request.getString("typeName"));
             param.put("userId", request.getString("userId"));
-            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.termQuery(param));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.termQuery(param));
             elasticSearch.tearDown();
             return JSON.toJSONString(result);
         } catch (Exception e) {
@@ -203,7 +202,7 @@ public class ElasticSearchService {
             Map<String, Object> param = new HashMap<>();
             param.put("indexName", request.getString("indexName"));
             param.put("typeName", request.getString("typeName"));
-            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.wildcardQuery(param));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.wildcardQuery(param));
             elasticSearch.tearDown();
             return JSON.toJSONString(result);
         } catch (Exception e) {
@@ -226,7 +225,7 @@ public class ElasticSearchService {
             Map<String, Object> param = new HashMap<>();
             param.put("indexName", request.getString("indexName"));
             param.put("typeName", request.getString("typeName"));
-            LZResult<List<UserRest>> result = new LZResult<>(elasticSearch.prefixQuery(param));
+            LZResult<List<User>> result = new LZResult<>(elasticSearch.prefixQuery(param));
             elasticSearch.tearDown();
             return JSON.toJSONString(result);
         } catch (Exception e) {
@@ -319,7 +318,7 @@ public class ElasticSearchService {
             param.put("indexName", request.getString("indexName"));
             param.put("typeName", request.getString("typeName"));
             param.put("id", request.getString("id"));
-            LZResult<UserRest> result = new LZResult<>(elasticSearch.get(param));
+            LZResult<User> result = new LZResult<>(elasticSearch.get(param));
             elasticSearch.tearDown();
             return JSON.toJSONString(result);
         } catch (Exception e) {

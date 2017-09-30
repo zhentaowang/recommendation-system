@@ -2,7 +2,7 @@ package com.adatafun.recommendation.service;
 
 import com.adatafun.recommendation.mapper.RecommendationRuleMapper;
 import com.adatafun.recommendation.model.RecommendationRule;
-import com.adatafun.recommendation.model.UserRest;
+import com.adatafun.recommendation.model.User;
 import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class RecommendationBaseContentService {
             JSONObject userBehaviorRuleContent = null;
             int userBehaviorFlag = Integer.parseInt(param.get("userBehaviorFlag").toString());
             Map<String,Object> paramUserBehaviorRule = new HashMap<>();
-            paramUserBehaviorRule.put("ruleName", "用户app行为");
+            paramUserBehaviorRule.put("ruleName", param.get("ruleName"));
             RecommendationRule userBehaviorRule = recommendationRuleMapper.getRecommendationRule(paramUserBehaviorRule);
             if (userBehaviorRule.equals(new RecommendationRule())) {
                 userBehaviorFlag = 0;
@@ -48,19 +48,19 @@ public class RecommendationBaseContentService {
 
             //获取用户行为标签
             Map<String,Object> paramUserBehaviorLabel = new HashMap<>();
-            paramUserBehaviorLabel.put("indexName", "user");
-            paramUserBehaviorLabel.put("typeName", "userRest");
+            paramUserBehaviorLabel.put("indexName", param.get("indexName"));
+            paramUserBehaviorLabel.put("typeName", param.get("typeName"));
             paramUserBehaviorLabel.put("userId", param.get("userId"));
-            List<UserRest> userRestList = getUserBehaviorLabel(paramUserBehaviorLabel);
-            assert userRestList != null;
-            if (userRestList.size() == 0) {
+            List<User> userList = getUserBehaviorLabel(paramUserBehaviorLabel);
+            assert userList != null;
+            if (userList.size() == 0) {
                 userBehaviorFlag = 0;
             }
             paramUserBehaviorLabel.put("typeName", "userTags");
-            List<UserRest> userTagsList = getUserBehaviorLabel(paramUserBehaviorLabel);
+            List<User> userTagsList = getUserBehaviorLabel(paramUserBehaviorLabel);
             result.put("userBehaviorRuleContent", userBehaviorRuleContent);
             result.put("userBehaviorRuleWeight", userBehaviorRuleWeight);
-            result.put("userRestList", userRestList);
+            result.put("userList", userList);
             result.put("userTagsList", userTagsList);
             result.put("userBehaviorFlag", userBehaviorFlag);
             result.put("status", LZStatus.SUCCESS.value());

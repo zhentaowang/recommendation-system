@@ -10,41 +10,175 @@ import io.searchbox.annotations.JestId;
 public class User {
 
     @JestId
-    private Integer id;
-    private String userId;
-    private String restaurantPreferences;
+    private String  id;
+    private String  userId;
+    private String  restaurantCode;
+    private Double  consumptionNum;
+    private Double  collectionNum;
+    private Double  commentNum;
+    private Double  usageCounter;
+    private Double  browseNum;
+    private Double  browseHours;
+    private Boolean multitimeConsumption;
+    private String  perCustomerTransaction;
+    private Double  averageOrderAmount;
+    private String  restaurantPreferences;
+    private Double  behaviorScore;
+    private Double  peopleConsumption;
+
 
     public User() {
         super();
         // TODO Auto-generated constructor stub
     }
-    public User(Integer id, String restaurantPreferences) {
+    public User(String id, String userId, String restaurantCode, Double consumptionNum, Double collectionNum, Double commentNum,
+                Double usageCounter, Double browseNum, Double browseHours, Boolean multiTimeConsumption,
+                String  perCustomerTransaction, Double  averageOrderAmount, String  restaurantPreferences,
+                Double peopleConsumption) {
         super();
         this.id = id;
+        this.userId = userId;
+        this.restaurantCode = restaurantCode;
+        this.consumptionNum = consumptionNum;
+        this.collectionNum = collectionNum;
+        this.commentNum = commentNum;
+        this.usageCounter = usageCounter;
+        this.browseNum = browseNum;
+        this.browseHours = browseHours;
+        this.multitimeConsumption = multiTimeConsumption;
+        this.perCustomerTransaction = perCustomerTransaction;
+        this.averageOrderAmount = averageOrderAmount;
         this.restaurantPreferences = restaurantPreferences;
+        this.peopleConsumption = peopleConsumption;
     }
 
     @Override
     public String toString() {
-        return "User [id=" + id + ", userId=" + userId + ", restaurantPreferences=" + restaurantPreferences + "]";
+        return "User [id=" + id + ", userId=" + userId + ", restaurantCode=" + restaurantCode + ", consumptionNum=" + consumptionNum +
+                ", collectionNum=" + collectionNum + ", commentNum=" + commentNum + ", multiTimeConsumption=" + multitimeConsumption +
+                ", usageCounter=" + usageCounter + ", browseNum=" + browseNum + ", browseHours=" + browseHours +
+                ", perCustomerTransaction=" + perCustomerTransaction + ", averageOrderAmount=" + averageOrderAmount +
+                ", peopleConsumption=" + peopleConsumption + ", restaurantPreferences=" + restaurantPreferences + "]";
     }
-    public Integer getId() {
+
+    public String getId() {
         return id;
     }
-    public void setId(Integer id) {
+
+    public void setId(String id) {
         this.id = id;
     }
+
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    public String getRestaurantCode() {
+        return restaurantCode;
+    }
+
+    public void setRestaurantCode(String restaurantCode) {
+        this.restaurantCode = restaurantCode;
+    }
+
+    public Double getConsumptionNum() {
+        return consumptionNum;
+    }
+
+    public void setConsumptionNum(Double consumptionNum) {
+        this.consumptionNum = consumptionNum;
+    }
+
+    public Double getCollectionNum() {
+        return collectionNum;
+    }
+
+    public void setCollectionNum(Double collectionNum) {
+        this.collectionNum = collectionNum;
+    }
+
+    public Double getCommentNum() {
+        return commentNum;
+    }
+
+    public void setCommentNum(Double commentNum) {
+        this.commentNum = commentNum;
+    }
+
+    public Double getUsageCounter() {
+        return usageCounter;
+    }
+
+    public void setUsageCounter(Double usageCounter) {
+        this.usageCounter = usageCounter;
+    }
+
+    public Double getBrowseNum() {
+        return browseNum;
+    }
+
+    public void setBrowseNum(Double browseNum) {
+        this.browseNum = browseNum;
+    }
+
+    public Double getBrowseHours() {
+        return browseHours;
+    }
+
+    public void setBrowseHours(Double browseHours) {
+        this.browseHours = browseHours;
+    }
+
+    public Boolean getMultiTimeConsumption() {
+        return multitimeConsumption;
+    }
+
+    public void setMultiTimeConsumption(Boolean multiTimeConsumption) {
+        this.multitimeConsumption = multiTimeConsumption;
+    }
+
+    public String getPerCustomerTransaction() {
+        return perCustomerTransaction;
+    }
+
+    public void setPerCustomerTransaction(String perCustomerTransaction) {
+        this.perCustomerTransaction = perCustomerTransaction;
+    }
+
+    public Double getAverageOrderAmount() {
+        return averageOrderAmount;
+    }
+
+    public void setAverageOrderAmount(Double averageOrderAmount) {
+        this.averageOrderAmount = averageOrderAmount;
+    }
+
     public String getRestaurantPreferences() {
         return restaurantPreferences;
     }
-    public void setRestaurantPreferences(String name) {
-        this.restaurantPreferences = name;
+
+    public void setRestaurantPreferences(String restaurantPreferences) {
+        this.restaurantPreferences = restaurantPreferences;
+    }
+
+    public Double getBehaviorScore() {
+        return behaviorScore;
+    }
+
+    public void setBehaviorScore(Double behaviorScore) {
+        this.behaviorScore = behaviorScore;
+    }
+
+    public Double getPeopleConsumption() {
+        return peopleConsumption;
+    }
+
+    public void setPeopleConsumption(Double peopleConsumption) {
+        this.peopleConsumption = peopleConsumption;
     }
 
 }
