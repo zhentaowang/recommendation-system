@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.ItdShopMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.ItdShop">
+    <result column="fd_id" jdbcType="BIGINT" property="fdId" />
+    <result column="fd_code" jdbcType="VARCHAR" property="fdCode" />
+    <result column="fd_name" jdbcType="VARCHAR" property="fdName" />
+    <result column="fd_sid" jdbcType="BIGINT" property="fdSid" />
+    <result column="fd_tel" jdbcType="VARCHAR" property="fdTel" />
+    <result column="fd_locationguide" jdbcType="VARCHAR" property="fdLocationguide" />
+    <result column="fd_rule" jdbcType="VARCHAR" property="fdRule" />
+    <result column="fd_businesshours" jdbcType="VARCHAR" property="fdBusinesshours" />
+    <result column="fd_lg" jdbcType="VARCHAR" property="fdLg" />
+    <result column="fd_location" jdbcType="VARCHAR" property="fdLocation" />
+    <result column="fd_type" jdbcType="VARCHAR" property="fdType" />
+    <result column="fd_terminal" jdbcType="VARCHAR" property="fdTerminal" />
+    <result column="fd_remark" jdbcType="VARCHAR" property="fdRemark" />
+    <result column="fd_region" jdbcType="VARCHAR" property="fdRegion" />
+    <result column="fd_inspection" jdbcType="VARCHAR" property="fdInspection" />
+    <result column="fd_del" jdbcType="BIGINT" property="fdDel" />
+    <result column="fd_boardinggate" jdbcType="VARCHAR" property="fdBoardinggate" />
+    <result column="fd_email" jdbcType="VARCHAR" property="fdEmail" />
+    <result column="fd_ad" jdbcType="VARCHAR" property="fdAd" />
+    <result column="fd_dtype" jdbcType="VARCHAR" property="fdDtype" />
+    <result column="fd_nearestgate" jdbcType="VARCHAR" property="fdNearestgate" />
+    <result column="fd_currencytype" jdbcType="VARCHAR" property="fdCurrencytype" />
+    <result column="fd_companyname" jdbcType="VARCHAR" property="fdCompanyname" />
+    <result column="fd_companyaddress" jdbcType="VARCHAR" property="fdCompanyaddress" />
+    <result column="fd_companyweb" jdbcType="VARCHAR" property="fdCompanyweb" />
+    <result column="fd_iscoupon" jdbcType="BIGINT" property="fdIscoupon" />
+    <result column="fd_isflashsale" jdbcType="BIGINT" property="fdIsflashsale" />
+    <result column="fd_class" jdbcType="VARCHAR" property="fdClass" />
+    <result column="fd_couponnote" jdbcType="VARCHAR" property="fdCouponnote" />
+    <result column="fd_flashsalenote" jdbcType="VARCHAR" property="fdFlashsalenote" />
+    <result column="fd_showapp" jdbcType="BIGINT" property="fdShowapp" />
+    <result column="fd_classname" jdbcType="VARCHAR" property="fdClassname" />
+    <result column="fd_scode" jdbcType="VARCHAR" property="fdScode" />
+    <result column="fd_adtype" jdbcType="BIGINT" property="fdAdtype" />
+    <result column="fd_citycode" jdbcType="VARCHAR" property="fdCitycode" />
+    <result column="fd_cityname" jdbcType="VARCHAR" property="fdCityname" />
+    <result column="fd_otherid" jdbcType="VARCHAR" property="fdOtherid" />
+  </resultMap>
+  <select id="getShopListByCode"  parameterType="map"  resultMap="BaseResultMap">
+    select * from itd_shop where fd_code in (${code}) and fd_del = 0 and fd_lg = 'zh-cn'
+  </select>
+</mapper>

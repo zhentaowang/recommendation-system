@@ -25,7 +25,6 @@
 package com.adatafun.recommendation.controller;
 
 import com.adatafun.recommendation.service.ElasticSearchService;
-import com.adatafun.recommendation.service.HybridRecommendationService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wyun.thrift.server.business.IBusinessService;
@@ -40,11 +39,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessService implements IBusinessService {
 
-    private final HybridRecommendationService hybridRecommendationService;
+    private final HybridRecommendationController hybridRecommendationController;
 
     @Autowired
-    public BusinessService(HybridRecommendationService hybridRecommendationService) {
-        this.hybridRecommendationService = hybridRecommendationService;
+    public BusinessService(HybridRecommendationController hybridRecommendationController) {
+        this.hybridRecommendationController = hybridRecommendationController;
     }
 
     @Override
@@ -53,40 +52,40 @@ public class BusinessService implements IBusinessService {
 
         switch (operation) {
             case "queryRestaurant":
-                success = hybridRecommendationService.getRestaurant(request);
+                success = hybridRecommendationController.getRestaurant(request);
                 break;
             case "queryLounge":
-                success = hybridRecommendationService.getLounge(request);
+                success = hybridRecommendationController.getLounge(request);
                 break;
             case "querySetMeal":
-                success = hybridRecommendationService.getSetMeal(request);
+                success = hybridRecommendationController.getSetMeal(request);
                 break;
             case "queryBrandRestaurant":
-                success = hybridRecommendationService.getBrandRestaurant(request);
+                success = hybridRecommendationController.getBrandRestaurant(request);
                 break;
             case "queryCuisine":
-                success = hybridRecommendationService.getCuisine(request);
+                success = hybridRecommendationController.getCuisine(request);
                 break;
             case "queryShop":
-                success = hybridRecommendationService.getShop(request);
+                success = hybridRecommendationController.getShop(request);
                 break;
             case "queryBannerArticle":
-                success = hybridRecommendationService.getBannerArticle(request);
+                success = hybridRecommendationController.getBannerArticle(request);
                 break;
             case "queryHomepageArticle":
-                success = hybridRecommendationService.getHomepageArticle(request);
+                success = hybridRecommendationController.getHomepageArticle(request);
                 break;
             case "queryPageArticle":
-                success = hybridRecommendationService.getPageArticle(request);
+                success = hybridRecommendationController.getPageArticle(request);
                 break;
             case "queryType":
-                success = hybridRecommendationService.getType(request);
+                success = hybridRecommendationController.getType(request);
                 break;
             case "queryProduct":
-                success = hybridRecommendationService.getProduct(request);
+                success = hybridRecommendationController.getProduct(request);
                 break;
             case "queryTypeProduct":
-                success = hybridRecommendationService.getProduct(request);
+                success = hybridRecommendationController.getProduct(request);
                 break;
             case "createIndex":
                 success = ElasticSearchService.createIndex(request);
