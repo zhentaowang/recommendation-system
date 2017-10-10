@@ -1,10 +1,7 @@
 package com.adatafun.recommendation.utils;
 
-import com.google.gson.GsonBuilder;
 import io.searchbox.client.JestClient;
-import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
-import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.core.*;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.DeleteIndex;
@@ -18,33 +15,13 @@ import java.util.List;
  * Copyright(C) 2017 杭州风数科技有限公司
  * Created by wzt on 05/09/2017.
  */
-public class JestService {
-
-    /**
-     * 获取JestClient对象
-     * @return
-     */
-    public JestClient getJestClient() {
-
-        JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://192.168.1.127:9200")
-                .gson(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm:ss").create())
-                .connTimeout(1500)
-                .readTimeout(3000)
-                .multiThreaded(true)
-                .build());
-        return factory.getObject();
-    }
+class JestService {
 
     /**
      * 创建索引
-     * @param jestClient
-     * @param indexName
-     * @return
-     * @throws Exception
+     * @return boolean
      */
-    public boolean createIndex(JestClient jestClient, String indexName) throws Exception {
+    boolean createIndex(JestClient jestClient, String indexName) throws Exception {
 
         JestResult jr = jestClient.execute(new CreateIndex.Builder(indexName).build());
         return jr.isSucceeded();
@@ -52,14 +29,9 @@ public class JestService {
 
     /**
      * Put映射
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param source
-     * @return
-     * @throws Exception
+     * @return boolean
      */
-    public boolean createIndexMapping(JestClient jestClient, String indexName, String typeName, String source) throws Exception {
+    boolean createIndexMapping(JestClient jestClient, String indexName, String typeName, String source) throws Exception {
 
         PutMapping putMapping = new PutMapping.Builder(indexName, typeName, source).build();
         JestResult jr = jestClient.execute(putMapping);
@@ -68,13 +40,9 @@ public class JestService {
 
     /**
      * Get映射
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @return
-     * @throws Exception
+     * @return String
      */
-    public String getIndexMapping(JestClient jestClient, String indexName, String typeName) throws Exception {
+    String getIndexMapping(JestClient jestClient, String indexName, String typeName) throws Exception {
 
         GetMapping getMapping = new GetMapping.Builder().addIndex(indexName).addType(typeName).build();
         JestResult jr = jestClient.execute(getMapping);
@@ -83,14 +51,9 @@ public class JestService {
 
     /**
      * 索引文档
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param objs
-     * @return
-     * @throws Exception
+     * @return boolean
      */
-    public boolean index(JestClient jestClient, String indexName, String typeName, List<Object> objs) throws Exception {
+    boolean index(JestClient jestClient, String indexName, String typeName, List<Object> objs) throws Exception {
 
         Bulk.Builder bulk = new Bulk.Builder().defaultIndex(indexName).defaultType(typeName);
         for (Object obj : objs) {
@@ -103,14 +66,9 @@ public class JestService {
 
     /**
      * 搜索文档
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param query
-     * @return
-     * @throws Exception
+     * @return SearchResult
      */
-    public SearchResult search(JestClient jestClient, String indexName, String typeName, String query) throws Exception {
+    SearchResult search(JestClient jestClient, String indexName, String typeName, String query) throws Exception {
 
         Search search = new Search.Builder(query)
                 .addIndex(indexName)
@@ -121,14 +79,9 @@ public class JestService {
 
     /**
      * Count文档
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param query
-     * @return
-     * @throws Exception
+     * @return Double
      */
-    public Double count(JestClient jestClient, String indexName, String typeName, String query) throws Exception {
+    Double count(JestClient jestClient, String indexName, String typeName, String query) throws Exception {
 
         Count count = new Count.Builder()
                 .addIndex(indexName)
@@ -141,14 +94,8 @@ public class JestService {
 
     /**
      * Get文档
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param id
-     * @return
-     * @throws Exception
      */
-    public JestResult get(JestClient jestClient, String indexName, String typeName, String id) throws Exception {
+    JestResult get(JestClient jestClient, String indexName, String typeName, String id) throws Exception {
 
         Get get = new Get.Builder(indexName, id).type(typeName).build();
         return jestClient.execute(get);
@@ -156,12 +103,9 @@ public class JestService {
 
     /**
      * Delete索引
-     * @param jestClient
-     * @param indexName
-     * @return
-     * @throws Exception
+     * @return boolean
      */
-    public boolean delete(JestClient jestClient, String indexName) throws Exception {
+    boolean delete(JestClient jestClient, String indexName) throws Exception {
 
         JestResult jr = jestClient.execute(new DeleteIndex.Builder(indexName).build());
         return jr.isSucceeded();
@@ -169,29 +113,12 @@ public class JestService {
 
     /**
      * Delete文档
-     * @param jestClient
-     * @param indexName
-     * @param typeName
-     * @param id
-     * @return
-     * @throws Exception
+     * @return boolean
      */
-    public boolean delete(JestClient jestClient, String indexName, String typeName, String id) throws Exception {
+    boolean delete(JestClient jestClient, String indexName, String typeName, String id) throws Exception {
 
         DocumentResult dr = jestClient.execute(new Delete.Builder(id).index(indexName).type(typeName).build());
         return dr.isSucceeded();
-    }
-
-    /**
-     * 关闭JestClient客户端
-     * @param jestClient
-     * @throws Exception
-     */
-    public void closeJestClient(JestClient jestClient) throws Exception {
-
-        if (jestClient != null) {
-            jestClient.shutdownClient();
-        }
     }
 
 }

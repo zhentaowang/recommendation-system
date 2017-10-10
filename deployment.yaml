@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: recommendation-system
+  namespace: recommendation-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: cloud-order
+    spec:
+      containers:
+        - name: cloud-order
+          image: java:8
+          command: ["java", "-jar", "java/cloud-order.jar"]
+          volumeMounts:
+          - mountPath: "/java"
+            name: code
+            subPath: airportcloud/airport-cloud/cloud-order
+          - mountPath: "/etc/localtime"
+            name: tz-config
+          ports:
+            - containerPort: 8080
+          env:
+            - name: zk_root
+              value: '/config-center/'
+            - name: zk_servers
+              value: 'zookeeper-standalone.platform:2181'
+            - name: secret_key
+              value: '123456'
+      volumes:
+        - name: code
+          persistentVolumeClaim:
+            claimName: pvc-airportcloud
+        - name: tz-config
+          hostPath:
+            path: /etc/localtime
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-order
+  namespace: airportcloud
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: cloud-order

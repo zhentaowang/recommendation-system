@@ -1,5 +1,6 @@
 package com.adatafun.recommendation.utils;
 
+import com.adatafun.recommendation.conf.ESFactory;
 import com.adatafun.recommendation.model.User;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -22,20 +23,22 @@ import java.util.Map;
  */
 public class ElasticSearch {
 
-    private JestService jestService;
     private JestClient jestClient;
+    private ESFactory esFactory;
+    private JestService jestService;
 
     @Before
     public void setUp() throws Exception {
 
+        esFactory = new ESFactory();
         jestService = new JestService();
-        jestClient = jestService.getJestClient();
+        jestClient = esFactory.getJestClient();
     }
 
     @After
     public void tearDown() throws Exception {
 
-        jestService.closeJestClient(jestClient);
+        esFactory.closeJestClient(jestClient);
     }
 
     public boolean createIndex(Map<String, Object> param) throws Exception {
