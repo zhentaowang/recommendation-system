@@ -8,16 +8,16 @@ spec:
   template:
     metadata:
       labels:
-        app: cloud-order
+        app: recommendation-system
     spec:
       containers:
-        - name: cloud-order
+        - name: recommendation-system
           image: java:8
-          command: ["java", "-jar", "java/cloud-order.jar"]
+          command: ["java", "-jar", "java/recommendation-system.jar"]
           volumeMounts:
           - mountPath: "/java"
             name: code
-            subPath: airportcloud/airport-cloud/cloud-order
+            subPath: recommendation-system/recommendation-system
           - mountPath: "/etc/localtime"
             name: tz-config
           ports:
@@ -32,7 +32,7 @@ spec:
       volumes:
         - name: code
           persistentVolumeClaim:
-            claimName: pvc-airportcloud
+            claimName: pvc-recommendation-system
         - name: tz-config
           hostPath:
             path: /etc/localtime
@@ -40,8 +40,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cloud-order
-  namespace: airportcloud
+  name: recommendation-system
+  namespace: recommendation-system
 spec:
   type: ClusterIP
   ports:
@@ -49,4 +49,4 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    app: cloud-order
+    app: recommendation-system

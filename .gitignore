@@ -27,8 +27,8 @@ hs_err_pid*
 guest-util/*
 
 # 数据库配置文件
-src/main/resources/application.properties
+# src/main/resources/application.properties
 
 # 数据库配置文件
-src/main/resources/log4j.properties
+ src/main/resources/log4j.properties
 
