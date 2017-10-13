@@ -20,7 +20,7 @@ public class ESFactory {
 
         JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://192.168.1.127:9200")
+                .Builder("http://122.224.248.26:9200")
                 .gson(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm:ss").create())
                 .connTimeout(1500)
                 .readTimeout(3000)
