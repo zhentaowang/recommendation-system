@@ -18,9 +18,10 @@ public class ESFactory {
      */
     public JestClient getJestClient() {
 
+        // 本地使用: 192.168.1.199(测试)，116.62.184.103(生产)；线上使用：122.224.248.26(测试)，192.168.142.57(生产)
         JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://122.224.248.26:9200") // 本地使用116.62.184.103，线上使用122.224.248.26
+                .Builder("http://192.168.142.57:9200")
                 .gson(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm:ss").create())
                 .connTimeout(1500)
                 .readTimeout(3000)
