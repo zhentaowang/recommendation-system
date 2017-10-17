@@ -4,12 +4,16 @@ import com.adatafun.recommendation.mapper.RecommendationRuleMapper;
 import com.adatafun.recommendation.mapper.TbdFlightInfoMapper;
 import com.adatafun.recommendation.model.RecommendationRule;
 import com.adatafun.recommendation.model.TbdFlightInfo;
+import com.adatafun.recommendation.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.adatafun.recommendation.service.ElasticSearchService.getUserBehaviorLabel;
 
 /**
  * RecommendationBaseRuleService.java
@@ -110,4 +114,21 @@ public class RecommendationBaseRuleService {
         return result;
 
     }
+
+    public Map<String, Object> getUserBehaviorRule(int userBehaviorFlag, String ruleName) throws Exception {
+
+        Map<String,Object> result = new HashMap<>();
+        Map<String,Object> paramUserBehaviorRule = new HashMap<>();
+        paramUserBehaviorRule.put("ruleName", ruleName);
+        RecommendationRule userBehaviorRule = recommendationRuleMapper.getRecommendationRule(paramUserBehaviorRule);
+        if (userBehaviorRule.equals(new RecommendationRule())) {
+            userBehaviorFlag = 0;
+        }
+
+        result.put("userBehaviorRule", userBehaviorRule);
+        result.put("userBehaviorFlag", userBehaviorFlag);
+        return result;
+
+    }
+
 }

@@ -1,8 +1,6 @@
 package com.adatafun.recommendation.mapper;
 
 
-import com.adatafun.recommendation.model.ItdShop;
-
 import java.util.List;
 import java.util.Map;
 
@@ -12,5 +10,5 @@ import java.util.Map;
  * Created by wzt on 2017/9/30.
  */
 public interface ItdShopMapper {
-    List<ItdShop> getShopListByCode(Map<String, Object> map);
+    List<Map<String, Object>> getShopListByCode(Map<String, Object> map);
 }

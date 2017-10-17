@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class ComparatorListSort implements Comparator<Map> {
     private String orderByKey;
-    public ComparatorListSort(String orderByKey){
+    ComparatorListSort(String orderByKey){
         this.orderByKey= orderByKey;
     }
     @Override

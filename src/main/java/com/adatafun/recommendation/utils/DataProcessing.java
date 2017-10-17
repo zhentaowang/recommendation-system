@@ -70,58 +70,64 @@ public class DataProcessing {
 
     }
 
-    public List<Map> weightCalculation(Map<String, Object> param) {
+    public List<Map<String, Object>> positionWeightCalculation(Map resultPosition, List<Map<String, Object>> productList) {
 
-        Double score = 0.0;
-        Map resultPosition = (Map)param.get("resultPosition");
         int positionFlag = Integer.parseInt(resultPosition.get("positionFlag").toString());
         RecommendationRule positionRule = (RecommendationRule)resultPosition.get("positionRule");
-        Map resultFlightInfo = (Map)param.get("resultFlightInfo");
-        int flightInfoFlag = Integer.parseInt(resultFlightInfo.get("flightInfoFlag").toString());
-        RecommendationRule flightInfoRule = (RecommendationRule)resultFlightInfo.get("flightInfoRule");
-        Map resultUserBehavior = (Map)param.get("resultUserBehavior");
-        List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
-        List<User> userTagsList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userTagsList")), User.class);
-        List<Map> productList = JSONArray.parseArray(JSONObject.toJSONString(param.get("productList")), Map.class);
-        for (Map<String, Object> product : productList) {
 
-            //计算地理位置得分
-            if (positionFlag == 1 && !product.get("fdInspection").equals("")) {
+        //计算地理位置得分
+        for (Map<String, Object> product : productList) {
+            Double score = 0.0;
+            if (positionFlag == 1 && !product.get("fd_inspection").equals("")) {
                 Integer positionRuleWeight = positionRule.getTypeWeight();
                 JSONObject positionRuleContent = JSONObject.parseObject(positionRule.getRuleContent());
-                score += positionRuleWeight * positionRuleContent.getDouble(product.get("fdInspection").toString());
-            }
-
-            //计算航班信息得分
-            if (flightInfoFlag == 1 && !product.get("fdInspection").equals("")) {
-                Integer flightInfoRuleWeight = flightInfoRule.getTypeWeight();
-                JSONObject flightInfoRuleContent = JSONObject.parseObject(flightInfoRule.getRuleContent());
-                score += flightInfoRuleWeight * flightInfoRuleContent.getDouble(product.get("fdInspection").toString());
+                score += positionRuleWeight * positionRuleContent.getDouble(product.get("fd_inspection").toString());
             }
             product.put("score", score);
         }
 
-        //计算用户行为得分
-        productList = behaviorWeightCalculation(resultUserBehavior, userList, userTagsList, productList);
         return productList;
 
     }
 
-    private List<Map> behaviorWeightCalculation(Map resultUserBehavior, List<User> userList, List<User> userTagsList, List<Map> productList) {
+    public List<Map<String, Object>> flightWeightCalculation(Map resultFlightInfo, List<Map<String, Object>> productList) {
 
+        int flightInfoFlag = Integer.parseInt(resultFlightInfo.get("flightInfoFlag").toString());
+        RecommendationRule flightInfoRule = (RecommendationRule)resultFlightInfo.get("flightInfoRule");
 
-        Double score = 0.0;
+        //计算航班信息得分
+        for (Map<String, Object> product : productList) {
+            Double score = 0.0;
+            if(!product.containsKey("score")) {
+                product.put("score", score);
+            }
+            if (flightInfoFlag == 1 && !product.get("fd_inspection").equals("")) {
+                Integer flightInfoRuleWeight = flightInfoRule.getTypeWeight();
+                JSONObject flightInfoRuleContent = JSONObject.parseObject(flightInfoRule.getRuleContent());
+                score += flightInfoRuleWeight * flightInfoRuleContent.getDouble(product.get("fd_inspection").toString());
+            }
+            product.put("score", score + Double.parseDouble(product.get("score").toString()));
+        }
+
+        return productList;
+
+    }
+
+    public List<Map<String, Object>> behaviorWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+
         int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
+        List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
         RecommendationRule userBehaviorRule = (RecommendationRule)resultUserBehavior.get("userBehaviorRule");
         for (Map<String, Object> product : productList) {
 
             //计算用户行为得分
+            Double score = 0.0;
             if (userBehaviorFlag == 1) { //用户行为推荐有效
                 Double behaviorScore = 0.0;
                 Integer userBehaviorRuleWeight = userBehaviorRule.getTypeWeight();
                 JSONObject userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
                 for (User user : userList) {
-                    if (user.getRestaurantCode().equals(product.get("fdCode"))) {
+                    if (user.getRestaurantCode().equals(product.get("fd_code"))) {
                         behaviorScore += user.getConsumptionNum() * userBehaviorRuleContent.getDouble("consumptionNum");
                         behaviorScore += user.getCollectionNum() * userBehaviorRuleContent.getDouble("collectionNum");
                         behaviorScore += user.getCommentNum() * userBehaviorRuleContent.getDouble("commentNum");
@@ -135,17 +141,6 @@ public class DataProcessing {
                         if (user.getMultiTimeConsumption()) {
                             behaviorScore += userBehaviorRuleContent.getDouble("isMultitimeConsumption");
                         }
-                        assert userTagsList != null;
-                        if (userTagsList.size() != 0) { //用户偏好推荐有效 对于商铺逻辑需要修改（商铺类型）
-                            if (product.get("fdCls").equals("1")) {
-                                product.put("fdCls", "中餐");
-                            } else if (product.get("fdCls").equals("0")) {
-                                product.put("fdCls", "西餐");
-                            }
-                            if (userTagsList.get(0).getRestaurantPreferences().equals(product.get("fdCls"))) {
-                                behaviorScore += userBehaviorRuleContent.getDouble("restaurantPreferences");
-                            }
-                        }
                     }
                 }
                 score += userBehaviorRuleWeight * behaviorScore;
@@ -156,17 +151,72 @@ public class DataProcessing {
 
     }
 
-    public List<Map> productSort(Map<String, Object> param) throws Exception {
+    public List<Map<String, Object>> preferenceWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+
+        List<User> userTagsList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userTagsList")), User.class);
+        RecommendationRule userBehaviorRule = (RecommendationRule)resultUserBehavior.get("userBehaviorRule");
+        for (Map<String, Object> product : productList) {
+
+            //计算用户偏好得分
+            Double score = 0.0;
+            Double behaviorScore = 0.0;
+            Integer userBehaviorRuleWeight = userBehaviorRule.getTypeWeight();
+            JSONObject userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
+            //用户偏好推荐有效 对于商铺逻辑需要修改（商铺类型）
+            if (product.get("fd_cls").equals("1")) {
+                product.put("fd_cls", "中餐");
+            } else if (product.get("fd_cls").equals("0")) {
+                product.put("fd_cls", "西餐");
+            }
+            if (userTagsList.get(0).getRestaurantPreferences().equals(product.get("fd_cls"))) {
+                behaviorScore += userBehaviorRuleContent.getDouble("restaurantPreferences");
+            }
+            score += userBehaviorRuleWeight * behaviorScore;
+            product.put("score", score + Double.parseDouble(product.get("score").toString()));
+        }
+        return productList;
+
+    }
+
+    public List<Map<String,Object>> bannerWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+
+        List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
+        int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
+        RecommendationRule userBehaviorRule = (RecommendationRule)resultUserBehavior.get("userBehaviorRule");
+        for (Map<String, Object> product : productList) {
+
+            //计算用户行为得分
+            Double score = 0.0;
+            if (userBehaviorFlag == 1) { //用户行为推荐有效
+                Double behaviorScore = 0.0;
+                Integer userBehaviorRuleWeight = userBehaviorRule.getTypeWeight();
+                JSONObject userBehaviorRuleContent = JSONObject.parseObject(userBehaviorRule.getRuleContent());
+                for (User user : userList) {
+                    if (user.getRestaurantCode().equals(product.get("id"))) {
+                        behaviorScore += user.getCollectionNum() * userBehaviorRuleContent.getDouble("collectionNum");
+                        behaviorScore += user.getBrowseNum() * userBehaviorRuleContent.getDouble("browseNum");
+                        behaviorScore += user.getBrowseHours() * userBehaviorRuleContent.getDouble("browseHours");
+                    }
+                }
+                score += userBehaviorRuleWeight * behaviorScore;
+            }
+            product.put("score", score);
+        }
+        return productList;
+
+    }
+
+    public List<Map> productSort(Map<String, Object> param, List<Map> list, List<Map<String, Object>> productList) throws Exception {
 
         String orderByKey = param.get("orderByKey").toString();
         String productCode = param.get("productCode").toString();
         ComparatorListSort comparatorListSort = new ComparatorListSort(orderByKey);
-        List<Map> productList = JSONArray.parseArray(JSONObject.toJSONString(param.get("productList")), Map.class);
-        List<Map> list = JSONArray.parseArray(JSONObject.toJSONString(param.get("list")), Map.class);
         //排序
-        for (Map product : productList) {
+        for (Map<String, Object> product : productList) {
             for (Map attribute : list) {
-                if (product.get("fdCode").equals(attribute.get(productCode).toString())) {
+                Boolean flag1 = product.containsKey("fd_code") && product.get("fd_code").equals(attribute.get(productCode).toString());
+                Boolean flag2 = product.containsKey("id") && product.get("id").equals(attribute.get(productCode).toString());
+                if (flag1 || flag2) {
                     Double tempScore = Integer.parseInt(attribute.get(orderByKey).toString())
                             * Double.parseDouble(product.get("score").toString());
                     Integer resultScore = tempScore.intValue();

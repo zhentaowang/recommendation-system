@@ -49,9 +49,13 @@
     <result column="fd_brand" jdbcType="VARCHAR" property="fdBrand" />
     <result column="fd_cls" jdbcType="VARCHAR" property="fdCls" />
   </resultMap>
-  <select id="getRestaurantListByCode"  parameterType="map"  resultMap="BaseResultMap">
+  <select id="getRestaurantListByCode"  parameterType="map"  resultType="map">
      select i.*, r.fd_cls from itd_restaurant as i left join restaurant_class as r on i.fd_class = r.fd_class
       where i.fd_code in (${code}) and i.fd_isflashsale = 1 and i.fd_iscoupon = 1
       and i.fd_settlementdiscount = 1 and i.fd_del = 0 and i.fd_lg = 'zh-cn'
+  </select>
+  <select id="getBrandRestaurantListByCode"  parameterType="map"  resultType="map">
+    select i.*, r.fd_cls from itd_restaurant as i left join restaurant_class as r on i.fd_class = r.fd_class
+    where i.fd_code in (${code}) and i.fd_brand is not null and i.fd_del = 0 and i.fd_lg = 'zh-cn'
   </select>
 </mapper>

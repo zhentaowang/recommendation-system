@@ -25,18 +25,33 @@ public class ParameterDetection {
         this.result = result;
     }
 
-    public Map<String, Object> verifyValidity() throws Exception {
+    public ParameterDetection(int flightInfoFlag, JSONObject param, Map<String, Object> result) {
+        this.flightInfoFlag = flightInfoFlag;
+        this.param = param;
+        this.result = result;
+    }
+
+    public ParameterDetection(JSONObject param, Map<String, Object> result) {
+        this.param = param;
+        this.result = result;
+    }
+
+    public Map<String, Object> verifyPositionValidity() throws Exception {
         if (!param.containsKey("position") ||
                 param.getString("position").equals("")) {
             positionFlag = 0; //没有位置信息，位置推荐无效
         }
+        result.put("positionFlag", positionFlag);
+        return result;
+    }
+
+    public Map<String, Object> verifyFlightValidity() throws Exception {
         if (!param.containsKey("flightNo") ||
                 !param.containsKey("flightDate") ||
                 param.getString("flightNo").equals("") ||
                 param.getString("flightDate").equals("")) {
             flightInfoFlag = 0; //没有航班信息或航班信息不全，航班推荐无效
         }
-        result.put("positionFlag", positionFlag);
         result.put("flightInfoFlag", flightInfoFlag);
         return result;
     }

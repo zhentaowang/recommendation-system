@@ -57,6 +57,18 @@ public class BusinessService implements IBusinessService {
             case "queryLounge":
                 success = hybridRecommendationController.getLounge(request);
                 break;
+            case "queryShop":
+                success = hybridRecommendationController.getShop(request);
+                break;
+            case "queryCustomizationRestaurant":
+                success = hybridRecommendationController.getCustomizationRestaurant(request);
+                break;
+            case "queryCustomizationLounge":
+                success = hybridRecommendationController.getCustomizationLounge(request);
+                break;
+            case "queryCustomizationShop":
+                success = hybridRecommendationController.getCustomizationShop(request);
+                break;
             case "querySetMeal":
                 success = hybridRecommendationController.getSetMeal(request);
                 break;
@@ -65,9 +77,6 @@ public class BusinessService implements IBusinessService {
                 break;
             case "queryCuisine":
                 success = hybridRecommendationController.getCuisine(request);
-                break;
-            case "queryShop":
-                success = hybridRecommendationController.getShop(request);
                 break;
             case "queryBannerArticle":
                 success = hybridRecommendationController.getBannerArticle(request);

@@ -1,7 +1,6 @@
 package com.adatafun.recommendation.service;
 
 import com.adatafun.recommendation.mapper.ItdShopMapper;
-import com.adatafun.recommendation.model.ItdShop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +22,13 @@ public class ItdShopService {
         this.itdShopMapper = itdShopMapper;
     }
 
-    public List<ItdShop> getShopListByCode (List<Map> list) throws Exception {
+    public List<Map<String, Object>> getShopListByCode (List<Map> list) throws Exception {
         Map<String,Object> paramShop = new HashMap<>();
         StringBuilder code = new StringBuilder();
         for(Map attribute : list) {
             code.append("'").append(attribute.get("shopCode").toString()).append("'").append(",");
         }
         paramShop.put("code", code.substring(0,code.length() - 1));
-        List<ItdShop> itdShopList = itdShopMapper.getShopListByCode(paramShop);
-        return itdShopList;
+        return itdShopMapper.getShopListByCode(paramShop);
     }
 }
