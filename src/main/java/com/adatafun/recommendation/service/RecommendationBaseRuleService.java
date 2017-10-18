@@ -4,16 +4,12 @@ import com.adatafun.recommendation.mapper.RecommendationRuleMapper;
 import com.adatafun.recommendation.mapper.TbdFlightInfoMapper;
 import com.adatafun.recommendation.model.RecommendationRule;
 import com.adatafun.recommendation.model.TbdFlightInfo;
-import com.adatafun.recommendation.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static com.adatafun.recommendation.service.ElasticSearchService.getUserBehaviorLabel;
 
 /**
  * RecommendationBaseRuleService.java
@@ -101,7 +97,9 @@ public class RecommendationBaseRuleService {
                         paramFlightInfoRule.put("ruleName", "航班起飞1小时前");
                     }
                 }
-                flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
+                if (flightInfoFlag == 1) {
+                    flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
+                }
                 if (flightInfoRule.equals(new RecommendationRule())) {
                     flightInfoFlag = 0;
                 }
