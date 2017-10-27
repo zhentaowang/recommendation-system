@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.TbdBellesLettresMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.TbdBellesLettres">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="subtitle" jdbcType="VARCHAR" property="subtitle" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="click_num" jdbcType="BIGINT" property="clickNum" />
+    <result column="sort" jdbcType="BIGINT" property="sort" />
+    <result column="person_labels" jdbcType="VARCHAR" property="personLabels" />
+    <result column="product_labels" jdbcType="VARCHAR" property="productLabels" />
+    <result column="airport_code_labels" jdbcType="VARCHAR" property="airportCodeLabels" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="use1" jdbcType="BIGINT" property="use1" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.adatafun.recommendation.model.TbdBellesLettres">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="getSubjectArticleListByLabel"  parameterType="map"  resultType="map">
+    select id, title from tbd_belles_lettres where 1 = 1
+    <if test="business != null and !business.trim().equals('')">
+      and person_labels like concat('%',#{business},'%')
+    </if>
+    <if test="crowd != null and !crowd.trim().equals('')">
+      or person_labels like concat('%',#{crowd},'%')
+    </if>
+    <if test="student != null and !student.trim().equals('')">
+      or person_labels like concat('%',#{student},'%')
+    </if>
+    <if test="eleven != null and !eleven.trim().equals('')">
+      or person_labels like concat('%',#{eleven},'%')
+    </if>
+    <if test="home != null and !home.trim().equals('')">
+      or person_labels like concat('%',#{home},'%')
+    </if>
+    limit 0,3
+  </select>
+  <select id="getSubjectArticleList"  parameterType="map"  resultType="map">
+    select id, title from tbd_belles_lettres limit 0,3
+  </select>
+</mapper>

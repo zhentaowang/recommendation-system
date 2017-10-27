@@ -1,5 +1,6 @@
 package com.adatafun.recommendation.utils;
 
+import com.adatafun.recommendation.model.User;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.*;
@@ -8,6 +9,7 @@ import io.searchbox.indices.DeleteIndex;
 import io.searchbox.indices.mapping.GetMapping;
 import io.searchbox.indices.mapping.PutMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,6 +77,21 @@ class JestService {
                 .addType(typeName)
                 .build();
         return jestClient.execute(search);
+    }
+
+    /**
+     * 验证用户是否浏览过该文章
+     * @return Boolean
+     */
+    Boolean isBrowse(JestClient jestClient, String indexName, String typeName, String query) throws Exception {
+
+        Count count = new Count.Builder()
+                .addIndex(indexName)
+                .addType(typeName)
+                .query(query)
+                .build();
+        CountResult results = jestClient.execute(count);
+        return results.getCount() > 0;
     }
 
     /**

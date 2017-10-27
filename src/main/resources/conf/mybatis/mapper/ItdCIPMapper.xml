@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.ItdCIPMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.ItdCIP">
+    <result column="fd_id" jdbcType="BIGINT" property="fdId" />
+    <result column="fd_code" jdbcType="VARCHAR" property="fdCode" />
+    <result column="fd_name" jdbcType="VARCHAR" property="fdName" />
+    <result column="fd_usedescription" jdbcType="VARCHAR" property="fdUsedescription" />
+    <result column="fd_location" jdbcType="VARCHAR" property="fdLocation" />
+    <result column="fd_price" jdbcType="BIGINT" property="fdPrice" />
+    <result column="fd_batchprice" jdbcType="BIGINT" property="fdBatchprice" />
+    <result column="fd_batchnum" jdbcType="BIGINT" property="fdBatchnum" />
+    <result column="fd_note" jdbcType="VARCHAR" property="fdNote" />
+    <result column="fd_sid" jdbcType="BIGINT" property="fdSid" />
+    <result column="fd_lg" jdbcType="VARCHAR" property="fdLg" />
+    <result column="fd_del" jdbcType="BIGINT" property="fdDel" />
+    <result column="fd_currencytype" jdbcType="VARCHAR" property="fdCurrencytype" />
+    <result column="fd_businesshours" jdbcType="VARCHAR" property="fdBusinesshours" />
+    <result column="fd_type" jdbcType="VARCHAR" property="fdType" />
+    <result column="fd_voucher" jdbcType="VARCHAR" property="fdVoucher" />
+    <result column="fd_terminal" jdbcType="VARCHAR" property="fdTerminal" />
+    <result column="fd_fname" jdbcType="VARCHAR" property="fdFname" />
+    <result column="fd_serivce" jdbcType="VARCHAR" property="fdSerivce" />
+    <result column="fd_currencytype2" jdbcType="VARCHAR" property="fdCurrencytype2" />
+    <result column="fd_price2" jdbcType="BIGINT" property="fdPrice2" />
+    <result column="fd_batchprice2" jdbcType="BIGINT" property="fdBatchprice2" />
+    <result column="fd_showapp" jdbcType="BIGINT" property="fdShowapp" />
+    <result column="fd_scode" jdbcType="VARCHAR" property="fdScode" />
+  </resultMap>
+  <select id="getCIPList"  parameterType="map"  resultType="map">
+    select * from itd_cip where fd_del = 0 and fd_lg = 'zh-cn' and fd_scode = #{airportCode,jdbcType=VARCHAR}
+  </select>
+</mapper>

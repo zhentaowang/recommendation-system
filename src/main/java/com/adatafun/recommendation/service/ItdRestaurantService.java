@@ -32,6 +32,12 @@ public class ItdRestaurantService {
         return itdRestaurantMapper.getRestaurantListByCode(paramRestaurant);
     }
 
+    public List<Map<String, Object>> getRestaurantList (String airportCode) throws Exception {
+        Map<String,Object> paramRestaurant = new HashMap<>();
+        paramRestaurant.put("airportCode", airportCode);
+        return itdRestaurantMapper.getRestaurantList(paramRestaurant);
+    }
+
     public List<Map<String,Object>> getBrandRestaurantListByCode (List<Map> list) throws Exception {
         Map<String,Object> paramRestaurant = new HashMap<>();
         StringBuilder code = new StringBuilder();

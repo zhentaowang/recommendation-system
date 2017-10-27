@@ -10,5 +10,6 @@ import java.util.Map;
  */
 public interface ItdRestaurantMapper {
     List<Map<String, Object>> getRestaurantListByCode(Map<String, Object> map);
+    List<Map<String, Object>> getRestaurantList(Map<String, Object> map);
     List<Map<String,Object>> getBrandRestaurantListByCode(Map<String, Object> map);
 }

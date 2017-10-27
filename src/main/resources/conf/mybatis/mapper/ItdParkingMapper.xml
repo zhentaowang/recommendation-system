@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.ItdParkingMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.ItdParking">
+    <result column="fd_id" jdbcType="BIGINT" property="fdId" />
+    <result column="fd_code" jdbcType="VARCHAR" property="fdCode" />
+    <result column="fd_name" jdbcType="VARCHAR" property="fdName" />
+    <result column="fd_sid" jdbcType="BIGINT" property="fdSid" />
+    <result column="fd_type" jdbcType="VARCHAR" property="fdType" />
+    <result column="fd_place1" jdbcType="VARCHAR" property="fdPlace1" />
+    <result column="fd_place2" jdbcType="VARCHAR" property="fdPlace2" />
+    <result column="fd_address" jdbcType="VARCHAR" property="fdAddress" />
+    <result column="fd_rule" jdbcType="VARCHAR" property="fdRule" />
+    <result column="fd_lg" jdbcType="VARCHAR" property="fdLg" />
+    <result column="fd_del" jdbcType="BIGINT" property="fdDel" />
+    <result column="fd_currencytype" jdbcType="VARCHAR" property="fdCurrencytype" />
+    <result column="fd_hourlyrate" jdbcType="BIGINT" property="fdHourlyrate" />
+    <result column="fd_cappingfees" jdbcType="BIGINT" property="fdCappingfees" />
+    <result column="fd_currencytype2" jdbcType="VARCHAR" property="fdCurrencytype2" />
+    <result column="fd_hourlyrate2" jdbcType="BIGINT" property="fdHourlyrate2" />
+    <result column="fd_cappingfees2" jdbcType="BIGINT" property="fdCappingfees2" />
+    <result column="fd_servicecharge" jdbcType="BIGINT" property="fdServicecharge" />
+    <result column="fd_servicecharge2" jdbcType="BIGINT" property="fdServicecharge2" />
+    <result column="fd_servicedescription" jdbcType="VARCHAR" property="fdServicedescription" />
+    <result column="fd_otherid" jdbcType="VARCHAR" property="fdOtherid" />
+    <result column="fd_showapp" jdbcType="BIGINT" property="fdShowapp" />
+    <result column="fd_scode" jdbcType="VARCHAR" property="fdScode" />
+    <result column="fd_terminal" jdbcType="VARCHAR" property="fdTerminal" />
+    <result column="fd_typeid" jdbcType="BIGINT" property="fdTypeid" />
+  </resultMap>
+  <select id="getParkingList"  parameterType="map"  resultType="map">
+    select * from itd_parking where fd_del = 0 and fd_lg = 'zh-cn' and fd_scode = #{airportCode,jdbcType=VARCHAR}
+  </select>
+</mapper>

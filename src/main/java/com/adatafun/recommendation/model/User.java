@@ -25,6 +25,13 @@ public class User {
     private String  restaurantPreferences;
     private Double  behaviorScore;
     private Double  peopleConsumption;
+    private Double  business;
+    private Double  crowd;
+    private Double  student;
+    private Double  eleven;
+    private Double  home;
+    private Double  priority;
+    private String productType;
 
 
     public User() {
@@ -34,7 +41,8 @@ public class User {
     public User(String id, String userId, String restaurantCode, Double consumptionNum, Double collectionNum, Double commentNum,
                 Double usageCounter, Double browseNum, Double browseHours, Boolean multiTimeConsumption,
                 String  perCustomerTransaction, Double  averageOrderAmount, String  restaurantPreferences,
-                Double peopleConsumption) {
+                Double peopleConsumption, Double business, Double crowd, Double student, Double eleven, Double home,
+                Double priority, String productType) {
         super();
         this.id = id;
         this.userId = userId;
@@ -50,6 +58,13 @@ public class User {
         this.averageOrderAmount = averageOrderAmount;
         this.restaurantPreferences = restaurantPreferences;
         this.peopleConsumption = peopleConsumption;
+        this.business = business;
+        this.crowd = crowd;
+        this.student = student;
+        this.eleven = eleven;
+        this.home = home;
+        this.priority = priority;
+        this.productType = productType;
     }
 
     @Override
@@ -58,7 +73,9 @@ public class User {
                 ", collectionNum=" + collectionNum + ", commentNum=" + commentNum + ", multiTimeConsumption=" + multitimeConsumption +
                 ", usageCounter=" + usageCounter + ", browseNum=" + browseNum + ", browseHours=" + browseHours +
                 ", perCustomerTransaction=" + perCustomerTransaction + ", averageOrderAmount=" + averageOrderAmount +
-                ", peopleConsumption=" + peopleConsumption + ", restaurantPreferences=" + restaurantPreferences + "]";
+                ", peopleConsumption=" + peopleConsumption + ", restaurantPreferences=" + restaurantPreferences +
+                ", business=" + business + ", crowd=" + crowd + ", student=" + student + ", eleven=" + eleven +
+                ", home=" + home + ", priority=" + priority +"]";
     }
 
     public String getId() {
@@ -179,6 +196,62 @@ public class User {
 
     public void setPeopleConsumption(Double peopleConsumption) {
         this.peopleConsumption = peopleConsumption;
+    }
+
+    public Double getBusiness() {
+        return business;
+    }
+
+    public void setBusiness(Double business) {
+        this.business = business;
+    }
+
+    public Double getCrowd() {
+        return crowd;
+    }
+
+    public void setCrowd(Double crowd) {
+        this.crowd = crowd;
+    }
+
+    public Double getStudent() {
+        return student;
+    }
+
+    public void setStudent(Double student) {
+        this.student = student;
+    }
+
+    public Double getEleven() {
+        return eleven;
+    }
+
+    public void setEleven(Double eleven) {
+        this.eleven = eleven;
+    }
+
+    public Double getHome() {
+        return home;
+    }
+
+    public void setHome(Double home) {
+        this.home = home;
+    }
+
+    public Double getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Double priority) {
+        this.priority = priority;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 
 }

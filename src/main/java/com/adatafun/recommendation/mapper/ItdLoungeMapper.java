@@ -10,4 +10,5 @@ import java.util.Map;
  */
 public interface ItdLoungeMapper {
     List<Map<String, Object>> getLoungeListByCode(Map<String, Object> map);
+    List<Map<String, Object>> getLoungeList(Map<String, Object> map);
 }

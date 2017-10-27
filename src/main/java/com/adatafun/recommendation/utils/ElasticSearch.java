@@ -82,17 +82,51 @@ public class ElasticSearch {
 
     }
 
+    public Boolean articleQuery(Map<String, Object> param) throws Exception {
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.matchQuery("userId", param.get("userId")))
+                .must(QueryBuilders.matchQuery("restaurantCode", param.get("subjectArticleId")));
+        searchSourceBuilder.query(queryBuilder);
+        String query = searchSourceBuilder.toString();
+        return jestService.isBrowse(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
+
+    }
+
+    public User getUserPreference(Map<String, Object> param) throws Exception {
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        QueryBuilder queryBuilder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.termQuery("userId", param.get("userId").toString()))
+                .must(QueryBuilders.boolQuery()
+                        .should(QueryBuilders.rangeQuery("business").gte("0"))
+                        .should(QueryBuilders.rangeQuery("crowd").gte("0"))
+                        .should(QueryBuilders.rangeQuery("student").gte("0"))
+                        .should(QueryBuilders.rangeQuery("eleven").gte("0"))
+                        .should(QueryBuilders.rangeQuery("home").gte("0")));
+        searchSourceBuilder.query(queryBuilder);
+        String query = searchSourceBuilder.toString();
+        SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
+        List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
+        User user = new User();
+        if (hits != null) {
+            user = hits.get(0).source; //在es中每个用户只有一条偏好记录
+        }
+        return user;
+
+    }
+
     public List<User> termQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder;//单值完全匹配查询
+        QueryBuilder queryBuilder; //单值完全匹配查询
         queryBuilder = QueryBuilders
                 .termQuery("userId", param.get("userId").toString());
         searchSourceBuilder.query(queryBuilder);
         searchSourceBuilder.size(10);
         searchSourceBuilder.from(0);
         String query = searchSourceBuilder.toString();
-        System.out.println(query);
         SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
         List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
         List<User> userList = new ArrayList<>();
@@ -103,12 +137,34 @@ public class ElasticSearch {
 
     }
 
+    public List<User> privilegeLabelQuery(Map<String, Object> param, List<Map<String, Object>> productList) throws Exception {
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        List<User> userList = new ArrayList<>();
+        QueryBuilder queryBuilder; //多值完全匹配查询
+        for (Map<String, Object> restaurant : productList) {
+            queryBuilder = QueryBuilders
+                    .matchQuery("restaurantCode", restaurant.get("fd_code").toString());
+            searchSourceBuilder.query(queryBuilder);
+            searchSourceBuilder.size(1);
+            searchSourceBuilder.from(0);
+            String query = searchSourceBuilder.toString();
+            SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
+            List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
+            if (hits != null) {
+                userList.add(hits.get(0).source);
+            }
+        }
+        return userList;
+
+    }
+
     public List<User> termsQuery(Map<String, Object> param) throws Exception {
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        QueryBuilder queryBuilder = QueryBuilders
-                /* 多值完全匹配查询 */
-                .termsQuery("name", "T:o\"m-", "J,e{r}r;y:");
+        QueryBuilder queryBuilder; //多值完全匹配查询
+        queryBuilder = QueryBuilders
+                .termsQuery("name", "rer", "yty");
         searchSourceBuilder.query(queryBuilder);
         searchSourceBuilder.size(10);
         searchSourceBuilder.from(0);

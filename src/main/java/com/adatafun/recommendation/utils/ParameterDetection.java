@@ -37,8 +37,7 @@ public class ParameterDetection {
     }
 
     public Map<String, Object> verifyPositionValidity() throws Exception {
-        if (!param.containsKey("position") ||
-                param.getString("position").equals("")) {
+        if (param.getString("position").equals("")) {
             positionFlag = 0; //没有位置信息，位置推荐无效
         }
         result.put("positionFlag", positionFlag);
@@ -46,9 +45,7 @@ public class ParameterDetection {
     }
 
     public Map<String, Object> verifyFlightValidity() throws Exception {
-        if (!param.containsKey("flightNo") ||
-                !param.containsKey("flightDate") ||
-                param.getString("flightNo").equals("") ||
+        if (param.getString("flightNo").equals("") ||
                 param.getString("flightDate").equals("")) {
             flightInfoFlag = 0; //没有航班信息或航班信息不全，航班推荐无效
         }

@@ -31,4 +31,10 @@ public class ItdShopService {
         paramShop.put("code", code.substring(0,code.length() - 1));
         return itdShopMapper.getShopListByCode(paramShop);
     }
+
+    public List<Map<String, Object>> getShopList (String airportCode) throws Exception {
+        Map<String,Object> paramShop = new HashMap<>();
+        paramShop.put("airportCode", airportCode);
+        return itdShopMapper.getShopList(paramShop);
+    }
 }

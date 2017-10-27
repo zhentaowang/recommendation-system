@@ -24,7 +24,47 @@ import java.util.Map;
 public class ElasticSearchService {
 
      private static ElasticSearch elasticSearch = new ElasticSearch();
-    
+
+    /**
+     * 搜索文档 - 多条件完全匹配查询
+     * @param param
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    static Boolean articleQuery(Map<String, Object> param) {
+
+        try {
+            elasticSearch.setUp();
+            Boolean result = elasticSearch.articleQuery(param);
+            elasticSearch.tearDown();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 多条件完全匹配查询
+     * @param param
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    static User getUserPreference(Map<String, Object> param) {
+
+        try {
+            elasticSearch.setUp();
+            User result = elasticSearch.getUserPreference(param);
+            elasticSearch.tearDown();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     /**
      * 搜索文档 - 单值完全匹配查询
      * @param param
@@ -36,6 +76,26 @@ public class ElasticSearchService {
         try {
             elasticSearch.setUp();
             List<User> result = elasticSearch.termQuery(param);
+            elasticSearch.tearDown();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    /**
+     * 搜索文档 - 多值完全匹配查询
+     * @param param
+     * indexName 索引名称
+     * typeName 索引类型
+     */
+    static List<User> getRestaurantPrivilegeLabel(Map<String, Object> param, List<Map<String, Object>> productList) {
+
+        try {
+            elasticSearch.setUp();
+            List<User> result = elasticSearch.privilegeLabelQuery(param, productList);
             elasticSearch.tearDown();
             return result;
         } catch (Exception e) {

@@ -50,12 +50,17 @@
     <result column="fd_cls" jdbcType="VARCHAR" property="fdCls" />
   </resultMap>
   <select id="getRestaurantListByCode"  parameterType="map"  resultType="map">
-     select i.*, r.fd_cls from itd_restaurant as i left join restaurant_class as r on i.fd_class = r.fd_class
-      where i.fd_code in (${code}) and i.fd_isflashsale = 1 and i.fd_iscoupon = 1
-      and i.fd_settlementdiscount = 1 and i.fd_del = 0 and i.fd_lg = 'zh-cn'
+     select i.*, r.fd_cls from restaurant_class as r right join
+     (select * from itd_restaurant where fd_code in (${code}) and fd_del = 0 and fd_lg = 'zh-cn' and fd_code like concat('R00','%'))
+     as i on r.fd_class = i.fd_class
   </select>
   <select id="getBrandRestaurantListByCode"  parameterType="map"  resultType="map">
     select i.*, r.fd_cls from itd_restaurant as i left join restaurant_class as r on i.fd_class = r.fd_class
-    where i.fd_code in (${code}) and i.fd_brand is not null and i.fd_del = 0 and i.fd_lg = 'zh-cn'
+    where i.fd_code in (${code}) and i.fd_brand is not null and i.fd_del = 0 and i.fd_lg = 'zh-cn' and i.fd_code like concat('R00','%')
+  </select>
+  <select id="getRestaurantList"  parameterType="map"  resultType="map">
+    select i.*, r.fd_cls from restaurant_class as r right join
+    (select * from itd_restaurant where fd_del = 0 and fd_lg = 'zh-cn' and fd_code like concat('R00','%') and fd_scode = #{airportCode, jdbcType=VARCHAR})
+    as i on r.fd_class = i.fd_class
   </select>
 </mapper>

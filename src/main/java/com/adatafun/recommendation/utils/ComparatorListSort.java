@@ -16,8 +16,8 @@ public class ComparatorListSort implements Comparator<Map> {
     @Override
     public int compare(Map o1, Map o2) {
         int order = 0;
-        Integer d1 = Integer.parseInt(o1.get(orderByKey).toString());
-        Integer d2 = Integer.parseInt(o2.get(orderByKey).toString());
+        Double d1 = Double.parseDouble(o1.get(orderByKey).toString());
+        Double d2 = Double.parseDouble(o2.get(orderByKey).toString());
 
         if (d1 < d2) {
             order = 1;

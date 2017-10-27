@@ -31,4 +31,10 @@ public class ItdLoungeService {
         paramLounge.put("code", code.substring(0,code.length() - 1));
         return itdLoungeMapper.getLoungeListByCode(paramLounge);
     }
+
+    public List<Map<String, Object>> getLoungeList (String airportCode) throws Exception {
+        Map<String,Object> paramLounge = new HashMap<>();
+        paramLounge.put("airportCode", airportCode);
+        return itdLoungeMapper.getLoungeList(paramLounge);
+    }
 }

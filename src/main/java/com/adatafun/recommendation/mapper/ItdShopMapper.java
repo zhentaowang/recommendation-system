@@ -11,4 +11,5 @@ import java.util.Map;
  */
 public interface ItdShopMapper {
     List<Map<String, Object>> getShopListByCode(Map<String, Object> map);
+    List<Map<String, Object>> getShopList(Map<String, Object> map);
 }

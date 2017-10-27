@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.adatafun.recommendation.mapper.TbdUserFlightMapper">
+  <resultMap id="BaseResultMap" type="com.adatafun.recommendation.model.TbdUserFlight">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="flight_info_id" jdbcType="VARCHAR" property="flightInfoId" />
+    <result column="status" jdbcType="BIGINT" property="status" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
+  </resultMap>
+  <select id="getUserIdentityById"  parameterType="map"  resultType="map">
+    select * from tbd_user_flight where flight_info_id =
+    (select id from tbd_flight_info where flight_date = #{flightDate,jdbcType=VARCHAR} and flight_no = #{flightNo,jdbcType=VARCHAR})
+    and user_id = #{userId,jdbcType=BIGINT} and status = 1 and identity != '1' and identity is not null
+  </select>
+</mapper>

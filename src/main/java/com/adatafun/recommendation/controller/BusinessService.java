@@ -39,10 +39,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class BusinessService implements IBusinessService {
 
+    private final RestaurantRecommendationController restaurantRecommendationController;
+    private final LoungeRecommendationController loungeRecommendationController;
+    private final ShopRecommendationController shopRecommendationController;
+    private final ArticleRecommendationController articleRecommendationController;
     private final HybridRecommendationController hybridRecommendationController;
 
     @Autowired
-    public BusinessService(HybridRecommendationController hybridRecommendationController) {
+    public BusinessService(RestaurantRecommendationController restaurantRecommendationController,
+                           LoungeRecommendationController loungeRecommendationController,
+                           ShopRecommendationController shopRecommendationController,
+                           ArticleRecommendationController articleRecommendationController,
+                           HybridRecommendationController hybridRecommendationController) {
+        this.restaurantRecommendationController = restaurantRecommendationController;
+        this.loungeRecommendationController = loungeRecommendationController;
+        this.shopRecommendationController = shopRecommendationController;
+        this.articleRecommendationController = articleRecommendationController;
         this.hybridRecommendationController = hybridRecommendationController;
     }
 
@@ -52,49 +64,52 @@ public class BusinessService implements IBusinessService {
 
         switch (operation) {
             case "queryRestaurant":
-                success = hybridRecommendationController.getRestaurant(request);
-                break;
-            case "queryLounge":
-                success = hybridRecommendationController.getLounge(request);
-                break;
-            case "queryShop":
-                success = hybridRecommendationController.getShop(request);
+                success = restaurantRecommendationController.getRestaurant(request);
                 break;
             case "queryCustomizationRestaurant":
-                success = hybridRecommendationController.getCustomizationRestaurant(request);
-                break;
-            case "queryCustomizationLounge":
-                success = hybridRecommendationController.getCustomizationLounge(request);
-                break;
-            case "queryCustomizationShop":
-                success = hybridRecommendationController.getCustomizationShop(request);
-                break;
-            case "querySetMeal":
-                success = hybridRecommendationController.getSetMeal(request);
+                success = restaurantRecommendationController.getCustomizationRestaurant(request);
                 break;
             case "queryBrandRestaurant":
-                success = hybridRecommendationController.getBrandRestaurant(request);
+                success = restaurantRecommendationController.getBrandRestaurant(request);
                 break;
-            case "queryCuisine":
-                success = hybridRecommendationController.getCuisine(request);
+            case "queryLounge":
+                success = loungeRecommendationController.getLounge(request);
+                break;
+            case "queryCustomizationLounge":
+                success = loungeRecommendationController.getCustomizationLounge(request);
+                break;
+            case "queryShop":
+                success = shopRecommendationController.getShop(request);
+                break;
+            case "queryCustomizationShop":
+                success = shopRecommendationController.getCustomizationShop(request);
                 break;
             case "queryBannerArticle":
-                success = hybridRecommendationController.getBannerArticle(request);
+                success = articleRecommendationController.getBannerArticle(request);
                 break;
-            case "queryHomepageArticle":
-                success = hybridRecommendationController.getHomepageArticle(request);
+            case "queryNewSubjectArticle":
+                success = articleRecommendationController.getNewSubjectArticle(request);
                 break;
-            case "queryPageArticle":
-                success = hybridRecommendationController.getPageArticle(request);
-                break;
-            case "queryType":
-                success = hybridRecommendationController.getType(request);
+            case "queryPreferenceSubjectArticle":
+                success = articleRecommendationController.getPreferenceSubjectArticle(request);
                 break;
             case "queryProduct":
                 success = hybridRecommendationController.getProduct(request);
                 break;
-            case "queryTypeProduct":
-                success = hybridRecommendationController.getProduct(request);
+            case "queryHomepageArticle":
+                success = articleRecommendationController.getHomepageArticle(request);
+                break;
+            case "queryPageArticle":
+                success = articleRecommendationController.getPageArticle(request);
+                break;
+            case "querySetMeal":
+                success = hybridRecommendationController.getSetMeal(request);
+                break;
+            case "queryCuisine":
+                success = hybridRecommendationController.getCuisine(request);
+                break;
+            case "queryType":
+                success = hybridRecommendationController.getType(request);
                 break;
             case "createIndex":
                 success = ElasticSearchService.createIndex(request);
