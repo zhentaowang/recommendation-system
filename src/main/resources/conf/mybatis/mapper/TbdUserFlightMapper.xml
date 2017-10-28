@@ -12,7 +12,7 @@
   </resultMap>
   <select id="getUserIdentityById"  parameterType="map"  resultType="map">
     select * from tbd_user_flight where flight_info_id =
-    (select id from tbd_flight_info where flight_date = #{flightDate,jdbcType=VARCHAR} and flight_no = #{flightNo,jdbcType=VARCHAR})
+    (select id from tbd_flight_info where flight_date = #{flightDate,jdbcType=VARCHAR} and flight_no = #{flightNo,jdbcType=VARCHAR} limit 0,1)
     and user_id = #{userId,jdbcType=BIGINT} and status = 1 and identity != '1' and identity is not null
   </select>
 </mapper>

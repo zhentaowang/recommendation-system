@@ -37,6 +37,6 @@
     <result column="to_type" jdbcType="VARCHAR" property="toType" />
   </resultMap>
   <select id="getFlightInfoByFlightNo"  parameterType="map"  resultMap="BaseResultMap">
-    SELECT * from tbd_flight_info where flight_no = #{flightNo,jdbcType=VARCHAR} and flight_date = #{flightDate,jdbcType=VARCHAR}
+    SELECT * from tbd_flight_info where flight_no = #{flightNo,jdbcType=VARCHAR} and flight_date = #{flightDate,jdbcType=VARCHAR} limit 0,1
   </select>
 </mapper>

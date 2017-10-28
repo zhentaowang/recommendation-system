@@ -288,10 +288,13 @@ public class DataProcessing {
                 } else if (product.get("fd_cls").equals("0")) {
                     product.put("fd_cls", "西餐");
                 }
-                if (userTagsList.get(0).getRestaurantPreferences().equals(product.get("fd_cls"))) {
-                    behaviorScore += userPreferenceRuleContent.getDouble("restaurantPreferences");
+                if (userTagsList.size() != 0) {
+                    String restaurantPreferences = userTagsList.get(0).getRestaurantPreferences();
+                    if (restaurantPreferences != null && restaurantPreferences.equals(product.get("fd_cls"))) {
+                        behaviorScore += userPreferenceRuleContent.getDouble("restaurantPreferences");
+                    }
+                    score += userPreferenceRuleWeight * behaviorScore;
                 }
-                score += userPreferenceRuleWeight * behaviorScore;
             }
             product.put("score", score + Double.parseDouble(product.get("score").toString()));
         }

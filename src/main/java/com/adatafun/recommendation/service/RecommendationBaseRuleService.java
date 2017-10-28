@@ -84,22 +84,27 @@ public class RecommendationBaseRuleService {
             if (tbdFlightInfo != null) {
                 Date currentDate = new Date();
                 Map<String,Object> paramFlightInfoRule = new HashMap<>();
-                if (tbdFlightInfo.getFlightStatus().equals("到达")) {
-                    Date flightArriveDate = tbdFlightInfo.getArriveTimeActual();
-                    int timeInterval = (int) (currentDate.getTime() - flightArriveDate.getTime())/(1000 * 60 * 60);
-                    if (timeInterval < 3) {
-                        paramFlightInfoRule.put("ruleName", "航班到达后3小时内");
-                    } else {
-                        flightInfoFlag = 0;
+                String flightStatus = tbdFlightInfo.getFlightStatus();
+                Date flightArriveDate = tbdFlightInfo.getArriveTimeActual();
+                Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
+                if (flightStatus != null) {
+                    if (flightStatus.equals("到达") && flightArriveDate != null) {
+                        int timeInterval = (int) (currentDate.getTime() - flightArriveDate.getTime())/(1000 * 60 * 60);
+                        if (timeInterval < 3) {
+                            paramFlightInfoRule.put("ruleName", "航班到达后3小时内");
+                        } else {
+                            flightInfoFlag = 0;
+                        }
+                    } else if ((flightStatus.equals("计划") || flightStatus.equals("延误")) && flightDepartDate != null) {
+                        int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
+                        if (timeInterval < 1) {
+                            paramFlightInfoRule.put("ruleName", "航班起飞1小时内");
+                        } else {
+                            paramFlightInfoRule.put("ruleName", "航班起飞1小时前");
+                        }
                     }
                 } else {
-                    Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
-                    int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
-                    if (timeInterval < 1) {
-                        paramFlightInfoRule.put("ruleName", "航班起飞1小时内");
-                    } else {
-                        paramFlightInfoRule.put("ruleName", "航班起飞1小时前");
-                    }
+                    flightInfoFlag = 0;
                 }
                 if (flightInfoFlag == 1) {
                     flightInfoRule = recommendationRuleMapper.getRecommendationRule(paramFlightInfoRule);
