@@ -93,6 +93,9 @@ public class BusinessService implements IBusinessService {
             case "queryPreferenceSubjectArticle":
                 success = articleRecommendationController.getPreferenceSubjectArticle(request);
                 break;
+            case "querySubjectArticleByLabel":
+                success = articleRecommendationController.getSubjectArticleByLabel(request);
+                break;
             case "queryProduct":
                 success = hybridRecommendationController.getProduct(request);
                 break;

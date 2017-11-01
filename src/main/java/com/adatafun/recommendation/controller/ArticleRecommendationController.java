@@ -103,19 +103,11 @@ public class ArticleRecommendationController {
     String getNewSubjectArticle(final JSONObject querySubjectArticleJson){
         try {
             if (querySubjectArticleJson.containsKey("userId")
-                    && querySubjectArticleJson.containsKey("subjectArticleInfo")) {
+                    && querySubjectArticleJson.containsKey("label")) {
 
-                List<Map> list;
-                Map<String, Object> detectionResult = new HashMap<>();
-                ParameterDetection parameterDetection = new ParameterDetection(querySubjectArticleJson, detectionResult);
-
-                //验证产品信息的完整性
-                detectionResult = parameterDetection.verifyIntegrity("subjectArticleInfo", "subjectArticleWeight", "subjectArticleId");
-                if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
-                    list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
-                } else {
-                    return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
-                }
+                //根据标签给用户推荐文章
+                String label = querySubjectArticleJson.getString("label");
+                List<Map<String, Object>> list = tbdBellesLettresService.getSubjectArticleListExpectSoleLabel(label);
 
                 //验证用户是否浏览过该文章
                 Map<String,Object> paramArticleQuery = new HashMap<>();
@@ -147,6 +139,25 @@ public class ArticleRecommendationController {
 
                 //根据偏好给用户推荐文章
                 List<Map<String, Object>> list = tbdBellesLettresService.getSubjectArticleListByLabel(resultUserPreference);
+
+                return JSON.toJSONString(new LZResult<>(list));
+            } else {
+                return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
+        }
+    }
+
+    String getSubjectArticleByLabel(final JSONObject querySubjectArticleJson){
+        try {
+            if (querySubjectArticleJson.containsKey("userId")
+                    && querySubjectArticleJson.containsKey("label")) {
+
+                //根据标签给用户推荐文章
+                String label = querySubjectArticleJson.getString("label");
+                List<Map<String, Object>> list = tbdBellesLettresService.getSubjectArticleListBySoleLabel(label);
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {

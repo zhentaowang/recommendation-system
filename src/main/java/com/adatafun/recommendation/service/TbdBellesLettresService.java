@@ -50,4 +50,26 @@ public class TbdBellesLettresService {
         return subjectArticle;
     }
 
+    public List<Map<String, Object>> getSubjectArticleListBySoleLabel (String label) throws Exception {
+
+        Map<String,Object> paramLabel = new HashMap<>();
+        paramLabel.put("label", label);
+        List<Map<String, Object>> list = tbdBellesLettresMapper.getSubjectArticleListBySoleLabel(paramLabel);
+        if (list.size() == 0) {
+            list = tbdBellesLettresMapper.getSubjectArticleList();
+        }
+        return list;
+    }
+
+    public List<Map<String, Object>> getSubjectArticleListExpectSoleLabel (String label) throws Exception {
+
+        Map<String,Object> paramLabel = new HashMap<>();
+        paramLabel.put("label", label);
+        List<Map<String, Object>> list = tbdBellesLettresMapper.getSubjectArticleListExpectSoleLabel(paramLabel);
+        if (list.size() == 0) {
+            list = tbdBellesLettresMapper.getSubjectArticleList();
+        }
+        return list;
+    }
+
 }

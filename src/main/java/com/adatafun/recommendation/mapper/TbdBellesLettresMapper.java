@@ -10,5 +10,7 @@ import java.util.Map;
  */
 public interface TbdBellesLettresMapper {
     List<Map<String, Object>> getSubjectArticleListByLabel(Map<String, Object> map);
+    List<Map<String, Object>> getSubjectArticleListBySoleLabel(Map<String, Object> map);
+    List<Map<String, Object>> getSubjectArticleListExpectSoleLabel(Map<String, Object> map);
     List<Map<String, Object>> getSubjectArticleList();
 }

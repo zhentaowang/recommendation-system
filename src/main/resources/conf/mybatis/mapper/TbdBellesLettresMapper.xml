@@ -42,6 +42,19 @@
     </if>
     limit 0,3
   </select>
+  <select id="getSubjectArticleListBySoleLabel"  parameterType="map"  resultType="map">
+    select id, title from tbd_belles_lettres where 1 = 1
+    <if test="label != null and !label.trim().equals('')">
+      or person_labels like concat('%',#{label},'%')
+    </if>
+    limit 0,3
+  </select>
+  <select id="getSubjectArticleListExpectSoleLabel"  parameterType="map"  resultType="map">
+    select id, title from tbd_belles_lettres where 1 = 1
+    <if test="label != null and !label.trim().equals('')">
+      or person_labels != #{label, jdbcType=VARCHAR}
+    </if>
+  </select>
   <select id="getSubjectArticleList"  parameterType="map"  resultType="map">
     select id, title from tbd_belles_lettres limit 0,3
   </select>

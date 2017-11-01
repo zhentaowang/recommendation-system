@@ -151,16 +151,16 @@ public class RecommendationBaseContentService {
 
     }
 
-    public List<Map> getNoLabelArticleByUser(Map<String, Object> param, List<Map> list) throws Exception {
+    public List<Map<String, Object>> getNoLabelArticleByUser(Map<String, Object> param, List<Map<String, Object>> list) throws Exception {
 
         //获取用户没有浏览过的文章
         Map<String,Object> paramArticleQuery = new HashMap<>();
-        List<Map> subList = new ArrayList<>();
+        List<Map<String, Object>> subList = new ArrayList<>();
         paramArticleQuery.put("indexName", param.get("indexName"));
         paramArticleQuery.put("typeName", param.get("typeName"));
         paramArticleQuery.put("userId", param.get("userId"));
-        for (Map article : list) {
-            paramArticleQuery.put("subjectArticleId", article.get("subjectArticleId"));
+        for (Map<String, Object> article : list) {
+            paramArticleQuery.put("subjectArticleId", article.get("id"));
             Boolean isBrowse = articleQuery(paramArticleQuery);
             if (isBrowse != null && isBrowse) {
                 subList.add(article);
@@ -168,7 +168,7 @@ public class RecommendationBaseContentService {
         }
         list.removeAll(subList);
 
-        return list;
+        return list.subList(0, 3);
 
     }
 
