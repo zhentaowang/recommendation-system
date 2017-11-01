@@ -283,11 +283,16 @@ public class DataProcessing {
                 Integer userPreferenceRuleWeight = userPreferenceRule.getTypeWeight();
                 JSONObject userPreferenceRuleContent = JSONObject.parseObject(userPreferenceRule.getRuleContent());
                 //目前只用于餐厅，对于商铺逻辑需要修改（商铺类型）
-                if (product.get("fd_cls").equals("1")) {
+                if (product.containsKey("fd_cls")) {
+                    if (product.get("fd_cls").equals("1")) {
+                        product.put("fd_cls", "中餐");
+                    } else {
+                        product.put("fd_cls", "西餐");
+                    }
+                } else {
                     product.put("fd_cls", "中餐");
-                } else if (product.get("fd_cls").equals("0")) {
-                    product.put("fd_cls", "西餐");
                 }
+
                 if (userTagsList.size() != 0) {
                     String restaurantPreferences = userTagsList.get(0).getRestaurantPreferences();
                     if (restaurantPreferences != null && restaurantPreferences.equals(product.get("fd_cls"))) {
@@ -432,6 +437,123 @@ public class DataProcessing {
         productList.sort(comparatorListSort);
         return productList;
 
+    }
+
+    public List<Map<String, Object>> soleProductSort(List<Map<String, Object>> productList) throws Exception {
+
+        //排序
+        ComparatorListSort comparatorListSort = new ComparatorListSort("score");
+        productList.sort(comparatorListSort);
+        return productList;
+
+    }
+
+    public Map<String, Integer> getMaxProductNum(List<Map<String, Object>> restaurantList,
+                                                  List<Map<String, Object>> loungeList,
+                                                  List<Map<String, Object>> shopList,
+                                                  List<Map<String, Object>> carList,
+                                                  List<Map<String, Object>> cipList,
+                                                  List<Map<String, Object>> parkingList,
+                                                  List<Map<String, Object>> vvipList) throws Exception {
+        Map<String, Integer> result = new HashMap<>();
+
+        //按类计算产品数量，并取最大值
+        Integer maxProductNum = 0, restaurantNum = 0, loungeNum = 0, shopNum = 0, carNum = 0, cipNum = 0, parkingNum = 0, vvipNum = 0;
+        if (restaurantList != null) {
+            restaurantNum = restaurantList.size();
+            maxProductNum = restaurantNum;
+        }
+        if (loungeList != null) {
+            loungeNum = loungeList.size();
+            if (maxProductNum < loungeNum) {
+                maxProductNum = loungeNum;
+            }
+        }
+        if (shopList != null) {
+            shopNum = shopList.size();
+            if (maxProductNum < shopNum) {
+                maxProductNum = shopNum;
+            }
+        }
+        if (carList != null) {
+            carNum = carList.size();
+            if (maxProductNum < carNum) {
+                maxProductNum = carNum;
+            }
+        }
+        if (cipList != null) {
+            cipNum = cipList.size();
+            if (maxProductNum < cipNum) {
+                maxProductNum = cipNum;
+            }
+        }
+        if (parkingList != null) {
+            parkingNum = parkingList.size();
+            if (maxProductNum < parkingNum) {
+                maxProductNum = parkingNum;
+            }
+        }
+        if (vvipList != null) {
+            vvipNum = vvipList.size();
+            if (maxProductNum < vvipNum) {
+                maxProductNum = vvipNum;
+            }
+        }
+
+        result.put("maxProductNum", maxProductNum);
+        result.put("restaurantNum", restaurantNum);
+        result.put("loungeNum", loungeNum);
+        result.put("shopNum", shopNum);
+        result.put("carNum", carNum);
+        result.put("cipNum", cipNum);
+        result.put("parkingNum", parkingNum);
+        result.put("vvipNum", vvipNum);
+
+        return result;
+    }
+
+    public List<Map<String, Object>> productSortBasedOperationStrategy(List<Map<String, Object>> restaurantList,
+                                                                        List<Map<String, Object>> loungeList,
+                                                                        List<Map<String, Object>> shopList,
+                                                                        List<Map<String, Object>> carList,
+                                                                        List<Map<String, Object>> cipList,
+                                                                        List<Map<String, Object>> parkingList,
+                                                                        List<Map<String, Object>> vvipList,
+                                                                        Map<String, Integer> productNum) throws Exception {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Integer productIndex = 0; productIndex < productNum.get("maxProductNum"); productIndex++) {
+            //满足该条件时快速安检权重最高
+            Boolean priorityFlag = cipList.size() != 0 && cipList.get(0).containsKey("flag") && cipList.get(0).get("flag").equals(1);
+            if (priorityFlag) {
+                if (productIndex < productNum.get("cipNum")) {
+                    result.add(cipList.get(productIndex));
+                }
+            }
+            if (productIndex < productNum.get("restaurantNum")) {
+                result.add(restaurantList.get(productIndex));
+            }
+            if (productIndex < productNum.get("loungeNum")) {
+                result.add(loungeList.get(productIndex));
+            }
+            if (productIndex < productNum.get("shopNum")) {
+                result.add(shopList.get(productIndex));
+            }
+            if (productIndex < productNum.get("carNum")) {
+                result.add(carList.get(productIndex));
+            }
+            if (!priorityFlag) {
+                if (productIndex < productNum.get("cipNum")) {
+                    result.add(cipList.get(productIndex));
+                }
+            }
+            if (productIndex < productNum.get("vvipNum")) {
+                result.add(vvipList.get(productIndex));
+            }
+            if (productIndex < productNum.get("parkingNum")) {
+                result.add(parkingList.get(productIndex));
+            }
+        }
+        return result;
     }
 
 }

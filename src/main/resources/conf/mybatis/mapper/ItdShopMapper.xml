@@ -44,6 +44,9 @@
     select * from itd_shop where fd_code in (${code}) and fd_del = 0 and fd_lg = 'zh-cn'
   </select>
   <select id="getShopList"  parameterType="map"  resultType="map">
-    select * from itd_shop where fd_del = 0 and fd_lg = 'zh-cn' and fd_scode = #{airportCode, jdbcType=VARCHAR}
+    select * from itd_shop where fd_del = 0 and fd_lg = 'zh-cn'
+    <if test="airportCode != null and !airportCode.trim().equals('')">
+      and fd_scode = #{airportCode, jdbcType=VARCHAR}
+    </if>
   </select>
 </mapper>

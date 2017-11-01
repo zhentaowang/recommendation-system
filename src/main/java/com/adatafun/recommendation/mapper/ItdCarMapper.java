@@ -9,5 +9,5 @@ import java.util.Map;
  * Created by wzt on 2017/10/23.
  */
 public interface ItdCarMapper {
-    List<Map<String, Object>> getCarList(String airportCode);
+    List<Map<String, Object>> getCarList(Map map);
 }

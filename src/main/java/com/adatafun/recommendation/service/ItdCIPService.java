@@ -4,6 +4,7 @@ import com.adatafun.recommendation.mapper.ItdCIPMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,8 @@ public class ItdCIPService {
     }
 
     public List<Map<String, Object>> getCIPList (String airportCode) throws Exception {
-        return itdCIPMapper.getCIPList(airportCode);
+        Map<String,Object> map = new HashMap<>();
+        map.put("airportCode", airportCode);
+        return itdCIPMapper.getCIPList(map);
     }
 }

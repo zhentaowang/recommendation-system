@@ -9,5 +9,5 @@ import java.util.Map;
  * Created by wzt on 2017/10/23.
  */
 public interface ItdVVIPMapper {
-    List<Map<String, Object>> getVVIPList(String airportCode);
+    List<Map<String, Object>> getVVIPList(Map map);
 }

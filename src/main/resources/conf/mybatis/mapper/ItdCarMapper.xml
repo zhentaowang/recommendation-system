@@ -28,7 +28,10 @@
     <result column="fd_nend" jdbcType="DATE" property="fdNend" />
     <result column="fd_showapp" jdbcType="BIGINT" property="fdShowapp" />
   </resultMap>
-  <select id="getCarList"  parameterType="string"  resultType="map">
-    select * from itd_car where fd_del = 0 and fd_lg = 'zh-cn' and fd_scode = #{airportCode,jdbcType=VARCHAR}
+  <select id="getCarList"  parameterType="map"  resultType="map">
+    select * from itd_car where fd_del = 0 and fd_lg = 'zh-cn'
+    <if test="airportCode != null and !airportCode.trim().equals('')">
+      and fd_scode = #{airportCode, jdbcType=VARCHAR}
+    </if>
   </select>
 </mapper>

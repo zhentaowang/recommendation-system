@@ -246,10 +246,10 @@ public class LoungeRecommendationController {
 
         //给休息室打分
         List<Map<String, Object>> productListBasedByFlight = dataProcessing.flightWeightCalculation(resultFlightInfo, itdLoungeList);
-        List<Map<String, Object>> productList = dataProcessing.behaviorWeightCalculation(userBehaviorAfterNorm, productListBasedByFlight);
+        List<Map<String, Object>> productListBasedBehavior = dataProcessing.behaviorWeightCalculation(userBehaviorAfterNorm, productListBasedByFlight);
+        List<Map<String, Object>> productList = dataProcessing.getFinalScore(loungeWeight, productListBasedBehavior);
 
-        //根据运营策略决定最终分数
-        return dataProcessing.getFinalScore(loungeWeight, productList);
+        return dataProcessing.soleProductSort(productList);
     }
 
 }

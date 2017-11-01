@@ -9,5 +9,5 @@ import java.util.Map;
  * Created by wzt on 2017/10/23.
  */
 public interface ItdCIPMapper {
-    List<Map<String, Object>> getCIPList(String airportCode);
+    List<Map<String, Object>> getCIPList(Map map);
 }

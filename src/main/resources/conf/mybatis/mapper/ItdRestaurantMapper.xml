@@ -60,7 +60,10 @@
   </select>
   <select id="getRestaurantList"  parameterType="map"  resultType="map">
     select i.*, r.fd_cls from restaurant_class as r right join
-    (select * from itd_restaurant where fd_del = 0 and fd_lg = 'zh-cn' and fd_code like concat('R00','%') and fd_scode = #{airportCode, jdbcType=VARCHAR})
+    (select * from itd_restaurant where fd_del = 0 and fd_lg = 'zh-cn' and fd_code like concat('R00','%')
+    <if test="airportCode != null and !airportCode.trim().equals('')">
+      and fd_scode = #{airportCode, jdbcType=VARCHAR}
+    </if>)
     as i on r.fd_class = i.fd_class
   </select>
 </mapper>

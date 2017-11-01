@@ -100,9 +100,9 @@ class HybridRecommendationController {
                 //去除无用信息并排序产品
                 DataProcessing dataProcessing = new DataProcessing();
                 List<Map<String, Object>> productList = dataProcessing.eraseUselessInfo(hybridProductList);
-                List<Map<String, Object>> result = dataProcessing.hybridProductSort(productList);
+                //List<Map<String, Object>> result = dataProcessing.hybridProductSort(productList);
 
-                return JSON.toJSONString(new LZResult<>(result));
+                return JSON.toJSONString(new LZResult<>(productList));
             } else {
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
@@ -210,48 +210,50 @@ class HybridRecommendationController {
     private List<Map<String, Object>> calculateAvailableProductWeight(Map<String, Integer> resultProductVerify
             , String userId, String airportCode, String flightNo, String flightDate) throws Exception {
 
-        List<Map<String, Object>> result = new ArrayList<>();
         Integer flightInfoFlag = resultProductVerify.get("flightInfoFlag");
         Integer cipFlag = resultProductVerify.get("cipFlag");
-        if (flightInfoFlag == 1) {
-            if (resultProductVerify.get("restaurantFlag") == 1) {
-                List<Map<String, Object>> restaurantList = restaurantRecommendationController.getRestaurantList(userId,
-                        airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("restaurantWeight"));
-                result.addAll(restaurantList);
-            }
-            if (resultProductVerify.get("loungeFlag") == 1) {
-                List<Map<String, Object>> loungeList = loungeRecommendationController.getLoungeList(userId,
-                        airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("loungeWeight"));
-                result.addAll(loungeList);
-            }
-            if (resultProductVerify.get("shopFlag") == 1) {
-                List<Map<String, Object>> shopList = shopRecommendationController.getShopList(userId,
-                        airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("shopWeight"));
-                result.addAll(shopList);
-            }
-            if (resultProductVerify.get("carFlag") == 1) {
-                List<Map<String, Object>> carList = carRecommendationController.getCarList(userId, airportCode,
-                        resultProductVerify.get("carWeight"));
-                result.addAll(carList);
-            }
-            if (cipFlag == 1 || cipFlag == 2) {
-                List<Map<String, Object>> cipList = cipRecommendationController.getCIPList(userId, airportCode, cipFlag,
-                        resultProductVerify.get("cipWeight"));
-                result.addAll(cipList);
-            }
-            if (resultProductVerify.get("parkingFlag") == 1) {
-                List<Map<String, Object>> parkingList = parkingRecommendationController.getParkingList(userId, airportCode,
-                        resultProductVerify.get("parkingWeight"));
-                result.addAll(parkingList);
-            }
-            if (resultProductVerify.get("vvipFlag") == 1) {
-                List<Map<String, Object>> vvipList = vvipRecommendationController.getVVIPList(userId, airportCode,
-                        resultProductVerify.get("vvipWeight"));
-                result.addAll(vvipList);
-            }
+        List<Map<String, Object>> restaurantList = new ArrayList<>();
+        List<Map<String, Object>> loungeList = new ArrayList<>();
+        List<Map<String, Object>> shopList = new ArrayList<>();
+        List<Map<String, Object>> carList = new ArrayList<>();
+        List<Map<String, Object>> cipList = new ArrayList<>();
+        List<Map<String, Object>> parkingList = new ArrayList<>();
+        List<Map<String, Object>> vvipList = new ArrayList<>();
+        if (resultProductVerify.get("restaurantFlag") == 1) {
+            restaurantList = restaurantRecommendationController.getRestaurantList(userId,
+                    airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("restaurantWeight"));
+        }
+        if (resultProductVerify.get("loungeFlag") == 1) {
+            loungeList = loungeRecommendationController.getLoungeList(userId,
+                    airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("loungeWeight"));
+        }
+        if (resultProductVerify.get("shopFlag") == 1) {
+            shopList = shopRecommendationController.getShopList(userId,
+                    airportCode, flightNo, flightDate, flightInfoFlag, resultProductVerify.get("shopWeight"));
+        }
+        if (resultProductVerify.get("carFlag") == 1) {
+            carList = carRecommendationController.getCarList(userId, airportCode,
+                    resultProductVerify.get("carWeight"));
+        }
+        if (cipFlag == 1 || cipFlag == 2) {
+            cipList = cipRecommendationController.getCIPList(userId, airportCode, cipFlag,
+                    resultProductVerify.get("cipWeight"));
+        }
+        if (resultProductVerify.get("parkingFlag") == 1) {
+            parkingList = parkingRecommendationController.getParkingList(userId, airportCode,
+                    resultProductVerify.get("parkingWeight"));
+        }
+        if (resultProductVerify.get("vvipFlag") == 1) {
+            vvipList = vvipRecommendationController.getVVIPList(userId, airportCode,
+                    resultProductVerify.get("vvipWeight"));
         }
 
-        return result;
+        //按类计算产品数量，并取最大值
+        DataProcessing dataProcessing = new DataProcessing();
+        Map<String, Integer> productNum = dataProcessing.getMaxProductNum(restaurantList, loungeList, shopList, carList,
+                cipList, parkingList, vvipList);
+        return dataProcessing.productSortBasedOperationStrategy(restaurantList, loungeList, shopList, carList, cipList,
+                parkingList, vvipList, productNum);
 
     }
 

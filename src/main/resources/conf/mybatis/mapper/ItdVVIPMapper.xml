@@ -30,6 +30,9 @@
     <result column="fd_seeing" jdbcType="VARCHAR" property="fdSeeing" />
   </resultMap>
   <select id="getVVIPList"  parameterType="map"  resultType="map">
-    select * from itd_vvip where fd_del = 0 and fd_lg = 'zh-cn' and fd_scode = #{airportCode,jdbcType=VARCHAR}
+    select * from itd_vvip where fd_del = 0 and fd_lg = 'zh-cn'
+    <if test="airportCode != null and !airportCode.trim().equals('')">
+      and fd_scode = #{airportCode, jdbcType=VARCHAR}
+    </if>
   </select>
 </mapper>

@@ -336,7 +336,7 @@ public class RestaurantRecommendationController {
     }
 
     List<Map<String, Object>> getRestaurantList(String userId, String airportCode, String flightNo, String flightDate,
-                                                Integer flightInfoFlag, Integer restautantWeight) throws Exception {
+                                                Integer flightInfoFlag, Integer restaurantWeight) throws Exception {
 
         int userBehaviorFlag = 1, privilegeInfoFlag = 1;
 
@@ -386,10 +386,10 @@ public class RestaurantRecommendationController {
         List<Map<String, Object>> productListBasedByFlight = dataProcessing.flightWeightCalculation(resultFlightInfo, itdRestaurantList);
         List<Map<String, Object>> productListBasedByPrivilege = dataProcessing.privilegeWeightCalculation(resultPrivilegeInfo, productListBasedByFlight);
         List<Map<String,Object>> productListBasedBehavior = dataProcessing.behaviorWeightCalculation(userBehaviorAfterNorm, productListBasedByPrivilege);
-        List<Map<String, Object>> productList = dataProcessing.preferenceWeightCalculation(resultUserPreference, productListBasedBehavior);
+        List<Map<String, Object>> productListBasedPreference = dataProcessing.preferenceWeightCalculation(resultUserPreference, productListBasedBehavior);
+        List<Map<String, Object>> productList = dataProcessing.getFinalScore(restaurantWeight, productListBasedPreference);
 
-        //根据运营策略决定最终分数
-        return dataProcessing.getFinalScore(restautantWeight, productList);
+        return dataProcessing.soleProductSort(productList);
     }
 
 }

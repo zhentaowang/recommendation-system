@@ -133,7 +133,7 @@ public class RecommendationBaseRuleService {
         int positionFlag = Integer.parseInt(param.get("positionFlag").toString());
         Integer hybridInfoFlag = flightInfoFlag + positionFlag;
         String position = param.get("position").toString();
-        if (hybridInfoFlag == 2) {
+        if (hybridInfoFlag == 2 || flightInfoFlag == 1) {
 
             //获取航班信息
             Map<String,Object> paramFlightInfo = new HashMap<>();
@@ -149,28 +149,34 @@ public class RecommendationBaseRuleService {
                 if (flightStatus.equals("计划")) {
                     Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
                     int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
-                    if (position.equals("机场外")) {
-                        if (timeInterval < 1) {
-                            paramHybridInfoRule.put("ruleName", "起飞前1小时以内+安检前/未知定位");
-                        } else if (timeInterval < 3) {
-                            paramHybridInfoRule.put("ruleName", "起飞前1-3小时+机场外");
-                        } else {
+                    if (timeInterval > 3) {
+                        if (position.equals("机场外")) {
                             paramHybridInfoRule.put("ruleName", "起飞前3小时以上+机场外");
+                        } else if (position.equals("机场内") || position.equals("安检后")) {
+                            paramHybridInfoRule.put("ruleName", "起飞前3小时以上+安检后");
+                        } else {
+                            paramHybridInfoRule.put("ruleName", "起飞前3小时以上+安检前/未知定位");
                         }
-                    } else {
-                        if (timeInterval < 1) {
-                            paramHybridInfoRule.put("ruleName", "起飞前1小时以内+安检后");
-                        } else if (timeInterval < 3) {
+                    } else if (timeInterval > 1) {
+                        if (position.equals("机场外")) {
+                            paramHybridInfoRule.put("ruleName", "起飞前1-3小时+机场外");
+                        } else if (position.equals("机场内") || position.equals("安检后")) {
                             paramHybridInfoRule.put("ruleName", "起飞前1-3小时+安检后");
                         } else {
-                            paramHybridInfoRule.put("ruleName", "起飞前3小时以上+安检后");
+                            paramHybridInfoRule.put("ruleName", "起飞前1-3小时+安检前/未知定位");
+                        }
+                    } else {
+                        if (position.equals("机场内") || position.equals("安检后")) {
+                            paramHybridInfoRule.put("ruleName", "起飞前1-3小时+安检后");
+                        } else {
+                            paramHybridInfoRule.put("ruleName", "起飞前1-3小时+安检前/未知定位");
                         }
                     }
                 } else if (flightStatus.equals("延误")) {
-                    if (position.equals("机场外")) {
-                        paramHybridInfoRule.put("ruleName", "延误+安检前/未知定位");
-                    } else {
+                    if (position.equals("机场内") || position.equals("安检后")) {
                         paramHybridInfoRule.put("ruleName", "延误+安检后");
+                    } else {
+                        paramHybridInfoRule.put("ruleName", "延误+安检前/未知定位");
                     }
                 }
                 hybridInfoRule = recommendationRuleMapper.getRecommendationRule(paramHybridInfoRule);
