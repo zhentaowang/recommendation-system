@@ -1,5 +1,6 @@
 src/main/java/com/adatafun/recommendation/Main.java
 src/main/java/com/adatafun/recommendation/conf/
+src/test/
 target/
 .idea/
 api/

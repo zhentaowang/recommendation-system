@@ -87,6 +87,9 @@ public class RecommendationBaseRuleService {
                 String flightStatus = tbdFlightInfo.getFlightStatus();
                 Date flightArriveDate = tbdFlightInfo.getArriveTimeActual();
                 Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
+                if (tbdFlightInfo.getDepartTimePredict() != null) {
+                    flightDepartDate = tbdFlightInfo.getDepartTimePredict();
+                }
                 if (flightStatus != null) {
                     if (flightStatus.equals("到达") && flightArriveDate != null) {
                         int timeInterval = (int) (currentDate.getTime() - flightArriveDate.getTime())/(1000 * 60 * 60);
@@ -145,7 +148,7 @@ public class RecommendationBaseRuleService {
                 Map<String,Object> paramHybridInfoRule = new HashMap<>();
                 if (flightStatus.equals("计划")) {
                     Date flightDepartDate = tbdFlightInfo.getDepartTimePlan();
-                    int timeInterval = (int) (currentDate.getTime() - flightDepartDate.getTime())/(1000 * 60 * 60);
+                    int timeInterval = (int) (flightDepartDate.getTime() - currentDate.getTime())/(1000 * 60 * 60);
                     if (position.equals("机场外")) {
                         if (timeInterval < 1) {
                             paramHybridInfoRule.put("ruleName", "起飞前1小时以内+安检前/未知定位");
@@ -299,6 +302,10 @@ public class RecommendationBaseRuleService {
                 String flightCategory = tbdFlightInfo.getFlightCategory();
                 Date currentDate = new Date();
                 long currentTime = currentDate.getTime();
+                long flightDepartTime = tbdFlightInfo.getDepartTimePlan().getTime();
+                if (tbdFlightInfo.getDepartTimePredict() != null) {
+                    flightDepartTime = tbdFlightInfo.getDepartTimePredict().getTime();
+                }
 
                 //礼宾车和要客通
                 if (flightStatus.equals("起飞")) {
@@ -317,8 +324,7 @@ public class RecommendationBaseRuleService {
                     }
                 }
                 if (flightStatus.equals("计划") || flightStatus.equals("延误")) {
-                    long flightDepartTimePlan = tbdFlightInfo.getDepartTimePlan().getTime();
-                    int timeInterval = (int) (flightDepartTimePlan - currentTime)/(1000 * 60 * 60);
+                    int timeInterval = (int) (flightDepartTime - currentTime)/(1000 * 60 * 60);
                     if (flightCategory.matches("0")) { //境内降落
                         if (timeInterval < 6) {
                             carFlag = 0;
@@ -334,8 +340,7 @@ public class RecommendationBaseRuleService {
 
                 //快速安检通道
                 if (flightStatus.equals("计划") || flightStatus.equals("延误")) {
-                    long flightDepartTimePlan = tbdFlightInfo.getDepartTimePlan().getTime();
-                    int timeInterval = (int) (flightDepartTimePlan - currentTime)/(1000 * 60 * 60);
+                    int timeInterval = (int) (flightDepartTime - currentTime)/(1000 * 60 * 60);
                     if (timeInterval < 1) {
                         cipFlag = 0;
                     } else if (timeInterval < 2) {
@@ -347,8 +352,7 @@ public class RecommendationBaseRuleService {
 
                 //代客泊车
                 if (flightStatus.equals("计划") || flightStatus.equals("延误")) {
-                    long flightDepartTimePlan = tbdFlightInfo.getDepartTimePlan().getTime();
-                    int timeInterval = (int) (flightDepartTimePlan - currentTime)/(1000 * 60 * 60);
+                    int timeInterval = (int) (flightDepartTime - currentTime)/(1000 * 60 * 60);
                     if (timeInterval < 4) {
                         parkingFlag = 0;
                     }
