@@ -5,7 +5,7 @@ import com.wyun.utils.SpringBeanUtil;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 /**
- * Created by wangzhentao@iairportcloud.com on 2016/09/02
+ * Created by wangzhentao@iairportcloud.com on 2017/09/02
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -16,9 +16,6 @@ public class Main {
         context.refresh();
         Server server = new Server(8080);
         server.startSingleServer(SpringBeanUtil.getBean("businessService"),"businessService");
-        while (true) {
-            System.out.println("start");
-            Thread.sleep(1000000);
-        }
+        Thread.sleep(1000000);
     }
 }

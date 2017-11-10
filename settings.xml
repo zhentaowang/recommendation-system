@@ -130,8 +130,7 @@ under the License.
       <passphrase>optional; leave empty if not used.</passphrase>
     </server>
     -->
-	<servers>  
-      <server>  
+    <server>
       <id>nexus-releases</id>  
       <username>admin</username>  
       <password>wyun20161230</password>  
@@ -140,8 +139,7 @@ under the License.
       <id>nexus-snapshots</id>  
       <username>admin</username>  
       <password>wyun20161230</password>  
-    </server>  
-  </servers>  
+    </server>
   </servers>
 
   <!-- mirrors

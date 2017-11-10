@@ -10,6 +10,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +23,7 @@ import java.util.*;
  * Created by wzt on 05/09/2017.
  */
 @Component
-class HybridRecommendationController {
+public class HybridRecommendationController {
 
     private final RecommendationBaseRuleService recommendationBaseRuleService;
     private final RecommendationBaseContentService recommendationBaseContentService;
@@ -32,6 +34,7 @@ class HybridRecommendationController {
     private final CIPRecommendationController cipRecommendationController;
     private final VVIPRecommendationController vvipRecommendationController;
     private final ParkingRecommendationController parkingRecommendationController;
+    private final static Logger logger = LoggerFactory.getLogger(HybridRecommendationController.class);
 
     @Autowired
     public HybridRecommendationController(RecommendationBaseRuleService recommendationBaseRuleService,
@@ -54,7 +57,7 @@ class HybridRecommendationController {
         this.parkingRecommendationController = parkingRecommendationController;
     }
 
-    String getProduct(final JSONObject queryTypeProductJson){
+    public String getProduct(final JSONObject queryTypeProductJson){
         try {
             if (queryTypeProductJson.containsKey("userId")
                     && queryTypeProductJson.containsKey("productTypeInfo")
@@ -80,6 +83,7 @@ class HybridRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("产品类型列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -104,15 +108,17 @@ class HybridRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(productList));
             } else {
+                logger.error("缺失用户或航班机场信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getType(final JSONObject queryTypeJson){
+    public String getType(final JSONObject queryTypeJson){
         try {
             if (queryTypeJson.containsKey("userId")
                     && queryTypeJson.containsKey("productTypeInfo")
@@ -142,6 +148,7 @@ class HybridRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("产品类型列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -177,15 +184,17 @@ class HybridRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(productList));
             } else {
+                logger.error("缺失用户或航班信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getSetMeal(final JSONObject querySetMealJson){
+    public String getSetMeal(final JSONObject querySetMealJson){
         try {
             JSONArray setMealInfo = querySetMealJson.getJSONArray("setMealInfo");
             LZResult<JSONArray> result = new LZResult<>(setMealInfo);
@@ -196,7 +205,7 @@ class HybridRecommendationController {
         }
     }
 
-    String getCuisine(final JSONObject queryCuisineJson){
+    public String getCuisine(final JSONObject queryCuisineJson){
         try {
             JSONArray cuisineInfo = queryCuisineJson.getJSONArray("cuisineInfo");
             LZResult<JSONArray> result = new LZResult<>(cuisineInfo);

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--    ogger可以被分配级别。级别包括：TRACE、DEBUG、INFO、WARN和ERROR         -->
+<!--                                                                -->
+<configuration>
+
+    <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>smtp.iairportcloud.com</smtpHost>
+        <smtpPort>25</smtpPort>
+        <username>wangzhentao@iairportcloud.com</username>
+        <password>w@@19890528</password>
+        <SSL>false</SSL>
+        <asynchronousSending>false</asynchronousSending>
+        <to>wangzhentao@iairportcloud.com</to>
+        <from>wangzhentao@iairportcloud.com</from>
+        <subject>【Error】: %logger</subject>
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+            <!--<pattern>[%d{'MM-dd HH:mm:ss,SSS',GMT+8:00}] %-5p [%.10t][%X{CU}] %logger{36}[%L] - %m%n</pattern>-->
+        <!--</layout>-->
+        <!-- html格式-->
+        <layout class="ch.qos.logback.classic.html.HTMLLayout">
+            <Pattern>%date%level%thread%logger{0}%line%message</Pattern>
+        </layout>
+        <!-- 这里采用等级过滤器 指定等级相符才发送 -->
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+            <!--<level>ERROR</level>-->
+            <!--<onMatch>ACCEPT</onMatch>-->
+            <!--<onMismatch>DENY</onMismatch>-->
+        <!--</filter>-->
+        <!-- 临界值和字符串过滤器，过滤掉低于指定临界值并包含指定字符串的日志 -->
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <!-- 正则表达式过滤 -->
+            <evaluator>
+                <matcher>
+                    <Name>controller</Name>
+                    <!-- filter out controller numbered statements -->
+                    <regex>Hybrid|Restaurant|Lounge|Shop|Article|Car|CIP|Parking|VVIP</regex>
+                </matcher>
+                <expression>controller.matches(logger)</expression>
+            </evaluator>
+
+            <!-- 级别和字符串过滤 -->
+            <!--<evaluator class="ch.qos.logback.classic.boolex.JaninoEventEvaluator">-->
+                <!--<expression>-->
+                    <!--&lt;!&ndash; & encoded as &amp; &ndash;&gt;-->
+                    <!--if(level > WARN ) {-->
+                        <!--Boolean result = logger.contains("ArticleRecommendationController");-->
+                        <!--return result;-->
+                    <!--}-->
+                    <!--return false;-->
+                <!--</expression>-->
+            <!--</evaluator>-->
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <root level="ERROR">
+        <appender-ref ref="EMAIL" />
+    </root>
+
+</configuration>

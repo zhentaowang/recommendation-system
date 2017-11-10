@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ public class LoungeRecommendationController {
     private final TbdUserFlightService tbdUserFlightService;
     private final RecommendationBaseRuleService recommendationBaseRuleService;
     private final RecommendationBaseContentService recommendationBaseContentService;
+    private final static Logger logger = LoggerFactory.getLogger(LoungeRecommendationController.class);
 
     @Autowired
     public LoungeRecommendationController(ItdLoungeService itdLoungeService,
@@ -40,7 +43,7 @@ public class LoungeRecommendationController {
         this.recommendationBaseContentService = recommendationBaseContentService;
     }
 
-    String getLounge(final JSONObject queryLoungeJson){
+    public String getLounge(final JSONObject queryLoungeJson){
         try {
             if (queryLoungeJson.containsKey("userId")
                     && queryLoungeJson.containsKey("loungeInfo")
@@ -82,6 +85,7 @@ public class LoungeRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("休息室列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -134,15 +138,17 @@ public class LoungeRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户、休息室或航班机场信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getCustomizationLounge(final JSONObject queryLoungeJson){
+    public String getCustomizationLounge(final JSONObject queryLoungeJson){
         try {
             if (queryLoungeJson.containsKey("userId")
                     && queryLoungeJson.containsKey("loungeInfo")) {
@@ -161,6 +167,7 @@ public class LoungeRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("休息室列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -205,10 +212,12 @@ public class LoungeRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户或休息室信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }

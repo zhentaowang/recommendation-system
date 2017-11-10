@@ -2,12 +2,14 @@ src/main/java/com/adatafun/recommendation/Main.java
 src/main/java/com/adatafun/recommendation/conf/
 src/test/
 target/
+logs/
 .idea/
 api/
 *.iml
 *.vscode/
 webapp/
 src/main/resources/generatorConfig.xml
+src/main/resources/logback-test.xml
 *swagger.json
 
 *.class

@@ -110,7 +110,7 @@ public class ElasticSearch {
         SearchResult result = jestService.search(jestClient, param.get("indexName").toString(), param.get("typeName").toString(), query);
         List<SearchResult.Hit<User, Void>> hits = result.getHits(User.class);
         User user = new User();
-        if (hits != null) {
+        if (hits != null && hits.size() != 0) {
             user = hits.get(0).source; //在es中每个用户只有一条偏好记录
         }
         return user;

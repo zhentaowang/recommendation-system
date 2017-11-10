@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ public class RestaurantRecommendationController {
     private final TbdUserFlightService tbdUserFlightService;
     private final RecommendationBaseRuleService recommendationBaseRuleService;
     private final RecommendationBaseContentService recommendationBaseContentService;
+    private final static Logger logger = LoggerFactory.getLogger(RestaurantRecommendationController.class);
 
     @Autowired
     public RestaurantRecommendationController(ItdRestaurantService itdRestaurantService,
@@ -48,7 +51,7 @@ public class RestaurantRecommendationController {
      * position 用户位置信息
      * restaurantInfo 排序前餐厅列表
      */
-    String getRestaurant(final JSONObject queryRestaurantJson){
+    public String getRestaurant(final JSONObject queryRestaurantJson){
 
         try {
             if (queryRestaurantJson.containsKey("userId")
@@ -91,6 +94,7 @@ public class RestaurantRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("餐厅列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -161,15 +165,17 @@ public class RestaurantRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户、餐厅或航班机场信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getCustomizationRestaurant(final JSONObject queryRestaurantJson){
+    public String getCustomizationRestaurant(final JSONObject queryRestaurantJson){
 
         try {
             if (queryRestaurantJson.containsKey("userId")
@@ -189,6 +195,7 @@ public class RestaurantRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("餐厅列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -239,15 +246,17 @@ public class RestaurantRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户或餐厅信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getBrandRestaurant(final JSONObject queryBrandRestaurantJson){
+    public String getBrandRestaurant(final JSONObject queryBrandRestaurantJson){
         try {
             if (queryBrandRestaurantJson.containsKey("userId")
                     && queryBrandRestaurantJson.containsKey("brandRestaurantInfo")) {
@@ -270,6 +279,7 @@ public class RestaurantRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("品牌餐厅列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -327,10 +337,12 @@ public class RestaurantRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户或餐厅信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }

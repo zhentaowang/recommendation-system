@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package com.adatafun.recommendation.controller;
+package com.adatafun.recommendation.thrift;
 
+import com.adatafun.recommendation.controller.*;
 import com.adatafun.recommendation.service.ElasticSearchService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

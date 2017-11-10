@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,7 @@ public class ShopRecommendationController {
     private final TbdUserFlightService tbdUserFlightService;
     private final RecommendationBaseRuleService recommendationBaseRuleService;
     private final RecommendationBaseContentService recommendationBaseContentService;
+    private final static Logger logger = LoggerFactory.getLogger(ShopRecommendationController.class);
 
     @Autowired
     public ShopRecommendationController(ItdShopService itdShopService,
@@ -40,7 +43,7 @@ public class ShopRecommendationController {
         this.recommendationBaseContentService = recommendationBaseContentService;
     }
 
-    String getShop(final JSONObject queryShopJson){
+    public String getShop(final JSONObject queryShopJson){
         try {
             if (queryShopJson.containsKey("userId")
                     && queryShopJson.containsKey("shopInfo")
@@ -82,6 +85,7 @@ public class ShopRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("商铺列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -134,15 +138,17 @@ public class ShopRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户、商铺或航班机场信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getCustomizationShop(final JSONObject queryShopJson){
+    public String getCustomizationShop(final JSONObject queryShopJson){
         try {
             if (queryShopJson.containsKey("userId")
                     && queryShopJson.containsKey("shopInfo")) {
@@ -161,6 +167,7 @@ public class ShopRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("商铺列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -205,10 +212,12 @@ public class ShopRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺失用户或商铺信息");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }

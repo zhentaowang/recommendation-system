@@ -72,7 +72,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> positionWeightCalculation(Map resultPosition, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> positionWeightCalculation(Map resultPosition, List<Map<String, Object>> productList) throws Exception {
 
         int positionFlag = Integer.parseInt(resultPosition.get("positionFlag").toString());
         RecommendationRule positionRule = (RecommendationRule)resultPosition.get("positionRule");
@@ -92,7 +92,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> flightWeightCalculation(Map resultFlightInfo, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> flightWeightCalculation(Map resultFlightInfo, List<Map<String, Object>> productList) throws Exception {
 
         int flightInfoFlag = Integer.parseInt(resultFlightInfo.get("flightInfoFlag").toString());
         RecommendationRule flightInfoRule = (RecommendationRule)resultFlightInfo.get("flightInfoRule");
@@ -115,7 +115,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map> typeWeightCalculation(Map resultHybridInfo, List<Map> typeList) {
+    public List<Map> typeWeightCalculation(Map resultHybridInfo, List<Map> typeList) throws Exception {
 
         int hybridInfoFlag = Integer.parseInt(resultHybridInfo.get("hybridInfoFlag").toString());
         RecommendationRule hybridInfoRule = (RecommendationRule)resultHybridInfo.get("hybridInfoRule");
@@ -159,7 +159,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> privilegeWeightCalculation(Map resultPrivilegeInfo, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> privilegeWeightCalculation(Map resultPrivilegeInfo, List<Map<String, Object>> productList) throws Exception {
 
         int privilegeInfoFlag = Integer.parseInt(resultPrivilegeInfo.get("privilegeInfoFlag").toString());
         List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultPrivilegeInfo.get("userList")), User.class);
@@ -198,7 +198,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> behaviorWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> behaviorWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) throws Exception {
 
         int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
         List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
@@ -236,7 +236,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map> typeBehaviorWeightCalculation(Map resultUserBehavior, List<Map> productList) {
+    public List<Map> typeBehaviorWeightCalculation(Map resultUserBehavior, List<Map> productList) throws Exception {
 
         int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
         List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
@@ -269,7 +269,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> preferenceWeightCalculation(Map resultUserPreference, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> preferenceWeightCalculation(Map resultUserPreference, List<Map<String, Object>> productList) throws Exception {
 
         int userPreferenceFlag = Integer.parseInt(resultUserPreference.get("userBehaviorFlag").toString());
         List<User> userTagsList = JSONArray.parseArray(JSONObject.toJSONString(resultUserPreference.get("userList")), User.class);
@@ -307,7 +307,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String,Object>> bannerWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+    public List<Map<String,Object>> bannerWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) throws Exception {
 
         List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);
         int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
@@ -335,7 +335,7 @@ public class DataProcessing {
 
     }
 
-    public List<Map<String, Object>> hybridWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) {
+    public List<Map<String, Object>> hybridWeightCalculation(Map resultUserBehavior, List<Map<String, Object>> productList) throws Exception {
 
         int userBehaviorFlag = Integer.parseInt(resultUserBehavior.get("userBehaviorFlag").toString());
         List<User> userList = JSONArray.parseArray(JSONObject.toJSONString(resultUserBehavior.get("userList")), User.class);

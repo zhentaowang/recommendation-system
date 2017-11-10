@@ -10,6 +10,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhiweicloud.guest.APIUtil.LXResult;
 import com.zhiweicloud.guest.APIUtil.LZResult;
 import com.zhiweicloud.guest.APIUtil.LZStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,7 @@ public class ArticleRecommendationController {
     private final TbdBellesLettresService tbdBellesLettresService;
     private final RecommendationBaseRuleService recommendationBaseRuleService;
     private final RecommendationBaseContentService recommendationBaseContentService;
+    private final static Logger logger = LoggerFactory.getLogger(ArticleRecommendationController.class);
 
     @Autowired
     public ArticleRecommendationController(TbdBannerService tbdBannerService,
@@ -41,7 +44,7 @@ public class ArticleRecommendationController {
         this.recommendationBaseContentService = recommendationBaseContentService;
     }
 
-    String getBannerArticle(final JSONObject queryBannerArticleJson){
+    public String getBannerArticle(final JSONObject queryBannerArticleJson){
         try {
             if (queryBannerArticleJson.containsKey("userId")
                     && queryBannerArticleJson.containsKey("bannerArticleInfo")) {
@@ -56,6 +59,7 @@ public class ArticleRecommendationController {
                 if (detectionResult.get("msg").equals(LZStatus.SUCCESS.display())) {
                     list = JSONArray.parseArray(JSONObject.toJSONString(detectionResult.get("list")), Map.class);
                 } else {
+                    logger.error("专题文章列表信息不全");
                     return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
                 }
 
@@ -92,15 +96,17 @@ public class ArticleRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺用户id或者专题文章列表");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getNewSubjectArticle(final JSONObject querySubjectArticleJson){
+    public String getNewSubjectArticle(final JSONObject querySubjectArticleJson){
         try {
             if (querySubjectArticleJson.containsKey("userId")
                     && querySubjectArticleJson.containsKey("label")) {
@@ -118,15 +124,17 @@ public class ArticleRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺用户id或者文章标签列表");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getPreferenceSubjectArticle(final JSONObject querySubjectArticleJson){
+    public String getPreferenceSubjectArticle(final JSONObject querySubjectArticleJson){
         try {
             if (querySubjectArticleJson.containsKey("userId")) {
 
@@ -142,15 +150,17 @@ public class ArticleRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺用户id");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getSubjectArticleByLabel(final JSONObject querySubjectArticleJson){
+    public String getSubjectArticleByLabel(final JSONObject querySubjectArticleJson){
         try {
             if (querySubjectArticleJson.containsKey("userId")
                     && querySubjectArticleJson.containsKey("label")) {
@@ -161,15 +171,17 @@ public class ArticleRecommendationController {
 
                 return JSON.toJSONString(new LZResult<>(list));
             } else {
+                logger.error("缺用户id或者文章标签列表");
                 return JSON.toJSONString(LXResult.build(LZStatus.DATA_TRANSFER_ERROR.value(), LZStatus.DATA_TRANSFER_ERROR.display()));
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("throws Exception ", e);
             return JSON.toJSONString(LXResult.build(LZStatus.ERROR.value(), LZStatus.ERROR.display()));
         }
     }
 
-    String getHomepageArticle(final JSONObject queryHomepageArticleJson){
+    public String getHomepageArticle(final JSONObject queryHomepageArticleJson){
         try {
             JSONArray homepageArticleInfo = queryHomepageArticleJson.getJSONArray("homepageArticleInfo");
             LZResult<JSONArray> result = new LZResult<>(homepageArticleInfo);
@@ -181,7 +193,7 @@ public class ArticleRecommendationController {
     }
 
 
-    String getPageArticle(final JSONObject queryPageArticleJson){
+    public String getPageArticle(final JSONObject queryPageArticleJson){
         try {
             JSONArray pageArticleInfo = queryPageArticleJson.getJSONArray("pageArticleInfo");
             LZResult<JSONArray> result = new LZResult<>(pageArticleInfo);
