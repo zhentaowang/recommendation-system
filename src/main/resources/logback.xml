@@ -10,6 +10,16 @@
 <!--                                                                -->
 <configuration>
 
+    <property name="ENCODER_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n"/>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>${ENCODER_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
     <appender name="EMAIL" class="ch.qos.logback.classic.net.SMTPAppender">
         <smtpHost>smtp.iairportcloud.com</smtpHost>
         <smtpPort>25</smtpPort>
@@ -61,8 +71,9 @@
         </filter>
     </appender>
 
-    <root level="ERROR">
+    <root level="debug">
         <appender-ref ref="EMAIL" />
+        <appender-ref ref="stdout" />
     </root>
 
 </configuration>
