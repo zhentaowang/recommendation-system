@@ -72,7 +72,7 @@
     </appender>
 
     <root level="debug">
-        <!--<appender-ref ref="EMAIL" />-->
+        <appender-ref ref="EMAIL" />
         <appender-ref ref="stdout" />
     </root>
 
