@@ -11,7 +11,7 @@
 <configuration>
 
     <property name="ENCODER_PATTERN"
-              value="%d{'yyyy-MM-dd HH:mm:ss,SSS',GMT+8:00} [%thread] %-5level %logger{80} - %msg%n"/>
+              value="%d{'yyyy-MM-dd HH:mm:ss.SSS',GMT+8:00} [%thread] %-5level %logger{80} - %msg%n"/>
 
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
